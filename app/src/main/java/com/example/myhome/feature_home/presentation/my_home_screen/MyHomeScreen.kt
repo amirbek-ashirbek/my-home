@@ -40,6 +40,7 @@ import com.example.myhome.feature_home.presentation.my_home_screen.components.My
 import com.example.myhome.ui.theme.Blue500
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material.Button
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -72,6 +73,14 @@ fun MyHomeScreen(
 					.align(CenterHorizontally)
 			)
 			Spacer(modifier = Modifier.height(64.dp))
+			//DELETE
+			Button(
+				onClick = { onMyHomeEvent(MyHomeEvent.GetCamerasFromDatabaseButtonClicked) }
+			) {
+				Text("hee-hee")
+			}
+			Spacer(modifier = Modifier.height(12.dp))
+			//DELETE
 			TabRow(
 				selectedTabIndex = pagerState.currentPage,
 				backgroundColor = MaterialTheme.colors.surface,

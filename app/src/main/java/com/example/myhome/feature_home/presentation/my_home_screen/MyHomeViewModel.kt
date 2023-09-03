@@ -1,18 +1,20 @@
 package com.example.myhome.feature_home.presentation.my_home_screen
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.myhome.feature_home.domain.repository.CameraRepository
 import com.example.myhome.feature_home.domain.use_case.GetCamerasUseCase
-import com.example.myhome.util.Response
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class MyHomeViewModel @Inject constructor(
-	private val getCamerasUseCase: GetCamerasUseCase
+	private val getCamerasUseCase: GetCamerasUseCase,
+	private val cameraRepository: CameraRepository
 ) : ViewModel() {
 
 	private val _uiState = MutableLiveData(
@@ -29,6 +31,9 @@ class MyHomeViewModel @Inject constructor(
 			is MyHomeEvent.CamerasPullRefreshed -> {
 				getCameras()
 			}
+			is MyHomeEvent.GetCamerasFromDatabaseButtonClicked -> {
+				getCamerasFromDatabase()
+			}
 		}
 	}
 
@@ -37,27 +42,26 @@ class MyHomeViewModel @Inject constructor(
 		_uiState.value = _uiState.value?.copy(camerasAreLoading = true)
 
 		viewModelScope.launch {
-			getCamerasUseCase.execute().collect { response ->
-				when (response) {
-					is Response.Success -> {
-						val cameras = response.data
-						val camerasByRoom = cameras?.groupBy { camera ->
-							camera.room
-						}
-						_uiState.value = _uiState.value?.copy(
-							cameras = camerasByRoom,
-							camerasError = false,
-							camerasAreLoading = false
-						)
-					}
-					is Response.Error -> {
-						_uiState.value = _uiState.value?.copy(
-							camerasError = true,
-							camerasAreLoading = false
-						)
-					}
-				}
+			getCamerasUseCase.execute().collect { cameras ->
+				val camerasGroupedByRoom = cameras.groupBy { it.room }
+				_uiState.value = _uiState.value?.copy(
+					cameras = camerasGroupedByRoom,
+					camerasAreLoading = false
+				)
 			}
 		}
 	}
+
+
+	private fun getCamerasFromDatabase() {
+		viewModelScope.launch {
+			cameraRepository.getCamerasFromDatabase().collect {
+				_uiState.value = _uiState.value?.copy(
+					camerasTest = it
+				)
+				Log.d("MyHomeViewModel", "cameras from database: ${_uiState.value?.camerasTest}")
+			}
+		}
+	}
+
 }
