@@ -1,7 +1,6 @@
 package com.example.myhome.feature_home.domain.use_case
 
 import android.util.Log
-import com.example.myhome.feature_home.domain.model.Camera
 import com.example.myhome.feature_home.domain.repository.CameraRepository
 import com.example.myhome.realm.model.CameraRealm
 import com.example.myhome.util.Response
@@ -15,7 +14,7 @@ class GetCamerasUseCase @Inject constructor(
 	private val cameraRepository: CameraRepository
 ) {
 
-	suspend fun execute(): Flow<List<Camera>> {
+	suspend fun execute(): Flow<List<CameraRealm>> {
 
 		val camerasFromDatabase = cameraRepository.getCamerasFromDatabase().firstOrNull()
 		Log.d("camerasFromDatabase!!!", "$camerasFromDatabase")
@@ -26,8 +25,7 @@ class GetCamerasUseCase @Inject constructor(
 					is Response.Success -> {
 						response.data?.let { cameras ->
 							cameras.forEach {  camera ->
-								cameraRepository.insertCamera(CameraRealm.toCameraRealm(camera))
-								Log.d("GetCamerasTestUseCase", "yooo")
+								cameraRepository.insertCamera(camera)
 							}
 						}
 						response.data ?: emptyList()
@@ -36,10 +34,7 @@ class GetCamerasUseCase @Inject constructor(
 				}
 			}
 		} else {
-			val cameras = camerasFromDatabase.map { cameraRealm ->
-				CameraRealm.toDomainCamera(cameraRealm)
-			}
-			flowOf(cameras)
+			flowOf(camerasFromDatabase)
 		}
 	}
 

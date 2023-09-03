@@ -2,7 +2,6 @@ package com.example.myhome.feature_home.data.repository
 
 import com.example.myhome.feature_home.data.remote.HomeApi
 import com.example.myhome.feature_home.data.remote.model.camera.CamerasResponse
-import com.example.myhome.feature_home.domain.model.Camera
 import com.example.myhome.feature_home.domain.repository.CameraRepository
 import com.example.myhome.realm.model.CameraRealm
 import com.example.myhome.util.Response
@@ -20,7 +19,7 @@ class CameraRepositoryImpl @Inject constructor(
 	private val realm: Realm
 ) : CameraRepository {
 
-	override suspend fun getCamerasFromNetwork(): Flow<Response<List<Camera>>> = flow {
+	override suspend fun getCamerasFromNetwork(): Flow<Response<List<CameraRealm>>> = flow {
 		try {
 			val camerasResponse = homeApi.getCameras()
 			val cameras = CamerasResponse.toCameras(camerasResponse)
@@ -36,6 +35,17 @@ class CameraRepositoryImpl @Inject constructor(
 
 	override suspend fun insertCamera(camera: CameraRealm) {
 		realm.write { copyToRealm(camera) }
+	}
+
+	override suspend fun updateCameraIsFavourite(camera: CameraRealm) {
+		realm.query<CameraRealm>(query = "_id == $0", camera._id)
+			.first()
+			.find()
+			?.also { queriedCamera ->
+				realm.write {
+					queriedCamera.isFavourite = !queriedCamera.isFavourite
+				}
+			}
 	}
 
 }

@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.myhome.feature_home.domain.repository.CameraRepository
 import com.example.myhome.feature_home.domain.use_case.GetCamerasUseCase
+import com.example.myhome.realm.model.CameraRealm
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -43,7 +44,7 @@ class MyHomeViewModel @Inject constructor(
 
 		viewModelScope.launch {
 			getCamerasUseCase.execute().collect { cameras ->
-				val camerasGroupedByRoom = cameras.groupBy { it.room }
+				val camerasGroupedByRoom: Map<String?, List<CameraRealm>> = cameras.groupBy { it.room }
 				_uiState.value = _uiState.value?.copy(
 					cameras = camerasGroupedByRoom,
 					camerasAreLoading = false

@@ -10,6 +10,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material.Button
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
@@ -34,13 +37,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.myhome.R
-import com.example.myhome.feature_home.domain.model.Camera
 import com.example.myhome.feature_home.presentation.my_home_screen.components.CameraItem
 import com.example.myhome.feature_home.presentation.my_home_screen.components.MyHomeHeader
+import com.example.myhome.realm.model.CameraRealm
 import com.example.myhome.ui.theme.Blue500
-import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material.Button
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -133,7 +133,7 @@ fun MyHomeScreen(
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun CamerasTabContent(
-	cameras: Map<String?, List<Camera>>?,
+	cameras: Map<String?, List<CameraRealm>>?,
 	camerasAreLoading: Boolean,
 	onCamerasRefreshed: () -> Unit
 ) {
