@@ -5,7 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.myhome.feature_home.domain.repository.CameraRepository
+import com.example.myhome.feature_home.domain.use_case.ChangeCameraIsFavouriteUseCase
 import com.example.myhome.feature_home.domain.use_case.GetCamerasUseCase
 import com.example.myhome.realm.model.CameraRealm
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,7 +15,7 @@ import javax.inject.Inject
 @HiltViewModel
 class MyHomeViewModel @Inject constructor(
 	private val getCamerasUseCase: GetCamerasUseCase,
-	private val cameraRepository: CameraRepository
+	private val changeCameraIsFavouriteUseCase: ChangeCameraIsFavouriteUseCase
 ) : ViewModel() {
 
 	private val _uiState = MutableLiveData(
@@ -32,8 +32,12 @@ class MyHomeViewModel @Inject constructor(
 			is MyHomeEvent.CamerasPullRefreshed -> {
 				getCameras()
 			}
-			is MyHomeEvent.GetCamerasFromDatabaseButtonClicked -> {
-				getCamerasFromDatabase()
+			is MyHomeEvent.CameraLongClicked -> {
+				_uiState.value = _uiState.value?.copy(longClickedCamera = event.camera)
+				_uiState.value?.longClickedCamera?.let {
+					changeCameraIsFavourite(it)
+				}
+				Log.d("CameraLongClicked","yoo ${_uiState.value?.longClickedCamera}")
 			}
 		}
 	}
@@ -53,15 +57,9 @@ class MyHomeViewModel @Inject constructor(
 		}
 	}
 
-
-	private fun getCamerasFromDatabase() {
+	private fun changeCameraIsFavourite(camera: CameraRealm) {
 		viewModelScope.launch {
-			cameraRepository.getCamerasFromDatabase().collect {
-				_uiState.value = _uiState.value?.copy(
-					camerasTest = it
-				)
-				Log.d("MyHomeViewModel", "cameras from database: ${_uiState.value?.camerasTest}")
-			}
+			changeCameraIsFavouriteUseCase.execute(camera = camera)
 		}
 	}
 

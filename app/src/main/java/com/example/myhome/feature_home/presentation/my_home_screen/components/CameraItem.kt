@@ -1,7 +1,9 @@
 package com.example.myhome.feature_home.presentation.my_home_screen.components
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -22,12 +24,14 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.myhome.R
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun CameraItem(
 	name: String,
 	snapshot: String,
 	isRecording: Boolean,
 	isFavourite: Boolean,
+	onCameraLongClicked: () -> Unit,
 	modifier: Modifier = Modifier
 ) {
 	Box(
@@ -40,6 +44,10 @@ fun CameraItem(
 			.background(
 				color = Color.White,
 				shape = RoundedCornerShape(12.dp)
+			)
+			.combinedClickable(
+				onClick = { },
+				onLongClick = { onCameraLongClicked() }
 			)
 	) {
 		Column {

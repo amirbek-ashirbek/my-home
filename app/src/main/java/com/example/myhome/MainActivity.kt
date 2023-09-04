@@ -13,7 +13,6 @@ import androidx.compose.material.Button
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -69,7 +68,7 @@ fun MyHomeNavHost(
 		}
 		composable("my_home") {
 			val viewModel = hiltViewModel<MyHomeViewModel>()
-			val uiState by viewModel.uiState.observeAsState(initial = MyHomeState())
+			val uiState = viewModel.uiState.observeAsState(initial = MyHomeState()).value
 			MyHomeScreen(
 				uiState = uiState,
 				onMyHomeEvent = viewModel::onEvent

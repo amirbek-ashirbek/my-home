@@ -19,7 +19,7 @@ class CameraRepositoryImpl @Inject constructor(
 	private val realm: Realm
 ) : CameraRepository {
 
-	override suspend fun getCamerasFromNetwork(): Flow<Response<List<CameraRealm>>> = flow {
+	override fun getCamerasFromNetwork(): Flow<Response<List<CameraRealm>>> = flow {
 		try {
 			val camerasResponse = homeApi.getCameras()
 			val cameras = CamerasResponse.toCameras(camerasResponse)
@@ -29,7 +29,7 @@ class CameraRepositoryImpl @Inject constructor(
 		}
 	}.flowOn(Dispatchers.IO)
 
-	override suspend fun getCamerasFromDatabase(): Flow<List<CameraRealm>> {
+	override fun getCamerasFromDatabase(): Flow<List<CameraRealm>> {
 		return realm.query<CameraRealm>().asFlow().map { it.list }
 	}
 
@@ -38,14 +38,10 @@ class CameraRepositoryImpl @Inject constructor(
 	}
 
 	override suspend fun updateCameraIsFavourite(camera: CameraRealm) {
-		realm.query<CameraRealm>(query = "_id == $0", camera._id)
-			.first()
-			.find()
-			?.also { queriedCamera ->
-				realm.write {
-					queriedCamera.isFavourite = !queriedCamera.isFavourite
-				}
-			}
+		realm.write {
+			val queriedCamera = query<CameraRealm>(query = "_id == $0", camera._id).first().find()
+			queriedCamera?.isFavourite = !queriedCamera?.isFavourite!!
+		}
 	}
 
 }

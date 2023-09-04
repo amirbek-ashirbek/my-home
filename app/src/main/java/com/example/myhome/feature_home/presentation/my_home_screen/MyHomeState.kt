@@ -4,7 +4,7 @@ import com.example.myhome.realm.model.CameraRealm
 
 data class MyHomeState(
 	val cameras: Map<String?, List<CameraRealm>>? = null,
-	val camerasTest: List<CameraRealm>? = null,
+	val longClickedCamera: CameraRealm? = null,
 	val camerasAreLoading: Boolean = false,
 	val camerasError: Boolean = false
 )

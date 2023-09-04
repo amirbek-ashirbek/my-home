@@ -12,7 +12,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material.Button
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
@@ -73,14 +72,6 @@ fun MyHomeScreen(
 					.align(CenterHorizontally)
 			)
 			Spacer(modifier = Modifier.height(64.dp))
-			//DELETE
-			Button(
-				onClick = { onMyHomeEvent(MyHomeEvent.GetCamerasFromDatabaseButtonClicked) }
-			) {
-				Text("hee-hee")
-			}
-			Spacer(modifier = Modifier.height(12.dp))
-			//DELETE
 			TabRow(
 				selectedTabIndex = pagerState.currentPage,
 				backgroundColor = MaterialTheme.colors.surface,
@@ -116,12 +107,17 @@ fun MyHomeScreen(
 						CamerasTabContent(
 							cameras = uiState.cameras,
 							camerasAreLoading = uiState.camerasAreLoading,
-							onCamerasRefreshed = { onMyHomeEvent(MyHomeEvent.CamerasPullRefreshed) }
+							onCamerasRefreshed = { onMyHomeEvent(MyHomeEvent.CamerasPullRefreshed) },
+							onCameraLongClicked = { camera ->
+								onMyHomeEvent(MyHomeEvent.CameraLongClicked(camera))
+							}
 						)
 					}
 					1 -> {
 						Box(
-							modifier = Modifier.fillMaxSize().background(color = Color.Green)
+							modifier = Modifier
+								.fillMaxSize()
+								.background(color = Color.Green)
 						)
 					}
 				}
@@ -135,7 +131,8 @@ fun MyHomeScreen(
 fun CamerasTabContent(
 	cameras: Map<String?, List<CameraRealm>>?,
 	camerasAreLoading: Boolean,
-	onCamerasRefreshed: () -> Unit
+	onCamerasRefreshed: () -> Unit,
+	onCameraLongClicked: (CameraRealm) -> Unit
 ) {
 
 	val camerasPullRefreshState = rememberPullRefreshState(
@@ -173,7 +170,8 @@ fun CamerasTabContent(
 								name = camera.name,
 								snapshot = camera.snapshot,
 								isRecording = camera.isRecording,
-								isFavourite = camera.isFavourite
+								isFavourite = camera.isFavourite,
+								onCameraLongClicked = { onCameraLongClicked(camera) }
 							)
 							Spacer(modifier = Modifier.height(12.dp))
 						}

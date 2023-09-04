@@ -6,9 +6,9 @@ import kotlinx.coroutines.flow.Flow
 
 interface CameraRepository {
 
-	suspend fun getCamerasFromNetwork(): Flow<Response<List<CameraRealm>>>
+	fun getCamerasFromNetwork(): Flow<Response<List<CameraRealm>>>
 
-	suspend fun getCamerasFromDatabase(): Flow<List<CameraRealm>>
+	fun getCamerasFromDatabase(): Flow<List<CameraRealm>>
 
 	suspend fun insertCamera(camera: CameraRealm)
 
