@@ -38,7 +38,7 @@ class CameraRepositoryImpl @Inject constructor(
 	}
 
 	override suspend fun updateCameraIsFavourite(camera: CameraRealm) {
-		realm.write {
+		realm.writeBlocking {
 			val queriedCamera = query<CameraRealm>(query = "_id == $0", camera._id).first().find()
 			queriedCamera?.isFavourite = !queriedCamera?.isFavourite!!
 		}

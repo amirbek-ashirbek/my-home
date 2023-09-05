@@ -32,12 +32,13 @@ class MyHomeViewModel @Inject constructor(
 			is MyHomeEvent.CamerasPullRefreshed -> {
 				getCameras()
 			}
-			is MyHomeEvent.CameraLongClicked -> {
-				_uiState.value = _uiState.value?.copy(longClickedCamera = event.camera)
-				_uiState.value?.longClickedCamera?.let {
+			is MyHomeEvent.CameraIsFavouriteToggled -> {
+				_uiState.value = _uiState.value?.copy(isFavouriteToggledCamera = event.camera)
+				_uiState.value?.isFavouriteToggledCamera?.let {
 					changeCameraIsFavourite(it)
 				}
-				Log.d("CameraLongClicked","yoo ${_uiState.value?.longClickedCamera}")
+				getCameras()
+				Log.d("FavouriteToggledCamera","yoo ${_uiState.value?.isFavouriteToggledCamera}")
 			}
 		}
 	}

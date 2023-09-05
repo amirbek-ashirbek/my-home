@@ -8,10 +8,10 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
@@ -27,6 +27,7 @@ import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.CenterEnd
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Alignment.Companion.TopCenter
 import androidx.compose.ui.Modifier
@@ -36,6 +37,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.myhome.R
+import com.example.myhome.feature_home.presentation.my_home_screen.components.ButtonFavourite
 import com.example.myhome.feature_home.presentation.my_home_screen.components.CameraItem
 import com.example.myhome.feature_home.presentation.my_home_screen.components.MyHomeHeader
 import com.example.myhome.realm.model.CameraRealm
@@ -108,8 +110,8 @@ fun MyHomeScreen(
 							cameras = uiState.cameras,
 							camerasAreLoading = uiState.camerasAreLoading,
 							onCamerasRefreshed = { onMyHomeEvent(MyHomeEvent.CamerasPullRefreshed) },
-							onCameraLongClicked = { camera ->
-								onMyHomeEvent(MyHomeEvent.CameraLongClicked(camera))
+							onIsFavouriteButtonClicked = { camera ->
+								onMyHomeEvent(MyHomeEvent.CameraIsFavouriteToggled(camera))
 							}
 						)
 					}
@@ -132,13 +134,15 @@ fun CamerasTabContent(
 	cameras: Map<String?, List<CameraRealm>>?,
 	camerasAreLoading: Boolean,
 	onCamerasRefreshed: () -> Unit,
-	onCameraLongClicked: (CameraRealm) -> Unit
+	onIsFavouriteButtonClicked: (CameraRealm) -> Unit
 ) {
 
 	val camerasPullRefreshState = rememberPullRefreshState(
 		refreshing = camerasAreLoading,
 		onRefresh = onCamerasRefreshed
 	)
+
+	val scrollState = rememberScrollState()
 
 	Box(
 		modifier = Modifier
@@ -150,29 +154,34 @@ fun CamerasTabContent(
 				CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
 			}
 		} else {
-			LazyColumn(
+			Column(
 				modifier = Modifier
 					.padding(horizontal = 21.dp)
+					.verticalScroll(state = scrollState)
 			) {
 				cameras?.forEach { (room, camerasByRoom) ->
-					if (room != null) {
-						item {
-							Text(
-								text = room,
-								style = MaterialTheme.typography.h1.copy(
-									fontWeight = FontWeight.Light
+					if (!room.isNullOrEmpty()) {
+						Text(
+							text = room,
+							style = MaterialTheme.typography.h1.copy(
+								fontWeight = FontWeight.Light
+							)
+						)
+						Spacer(modifier = Modifier.height(12.dp))
+						camerasByRoom.forEach { camera ->
+							Box {
+								ButtonFavourite(
+									isFavourite = camera.isFavourite,
+									onClick = { onIsFavouriteButtonClicked(camera) },
+									modifier = Modifier.align(CenterEnd)
 								)
-							)
-							Spacer(modifier = Modifier.height(12.dp))
-						}
-						items(camerasByRoom) { camera ->
-							CameraItem(
-								name = camera.name,
-								snapshot = camera.snapshot,
-								isRecording = camera.isRecording,
-								isFavourite = camera.isFavourite,
-								onCameraLongClicked = { onCameraLongClicked(camera) }
-							)
+								CameraItem(
+									name = camera.name,
+									snapshot = camera.snapshot,
+									isRecording = camera.isRecording,
+									isFavourite = camera.isFavourite
+								)
+							}
 							Spacer(modifier = Modifier.height(12.dp))
 						}
 					}
