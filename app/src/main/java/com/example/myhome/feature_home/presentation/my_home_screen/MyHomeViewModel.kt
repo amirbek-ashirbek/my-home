@@ -1,6 +1,5 @@
 package com.example.myhome.feature_home.presentation.my_home_screen
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -15,7 +14,7 @@ import javax.inject.Inject
 @HiltViewModel
 class MyHomeViewModel @Inject constructor(
 	private val getCamerasUseCase: GetCamerasUseCase,
-	private val changeCameraIsFavouriteUseCase: ChangeCameraIsFavouriteUseCase
+	private val changeCameraIsFavouriteUseCase: ChangeCameraIsFavouriteUseCase,
 ) : ViewModel() {
 
 	private val _uiState = MutableLiveData(
@@ -29,24 +28,18 @@ class MyHomeViewModel @Inject constructor(
 
 	fun onEvent(event: MyHomeEvent) {
 		when (event) {
-			is MyHomeEvent.CamerasPullRefreshed -> {
-				getCameras()
-			}
-			is MyHomeEvent.CameraIsFavouriteToggled -> {
-				_uiState.value = _uiState.value?.copy(isFavouriteToggledCamera = event.camera)
-				_uiState.value?.isFavouriteToggledCamera?.let {
-					changeCameraIsFavourite(it)
-				}
-				getCameras()
-				Log.d("FavouriteToggledCamera","yoo ${_uiState.value?.isFavouriteToggledCamera}")
-			}
+			is MyHomeEvent.CamerasPullRefreshed -> getCameras()
+
+			is MyHomeEvent.CameraIsFavouriteToggled -> handleCameraFavouriteToggled(event.camera)
 		}
 	}
 
 	private fun getCameras() {
-
 		_uiState.value = _uiState.value?.copy(camerasAreLoading = true)
+		updateCamerasState()
+	}
 
+	private fun updateCamerasState() {
 		viewModelScope.launch {
 			getCamerasUseCase.execute().collect { cameras ->
 				val camerasGroupedByRoom: Map<String?, List<CameraRealm>> = cameras.groupBy { it.room }
@@ -58,9 +51,11 @@ class MyHomeViewModel @Inject constructor(
 		}
 	}
 
-	private fun changeCameraIsFavourite(camera: CameraRealm) {
+	private fun handleCameraFavouriteToggled(camera: CameraRealm) {
+		_uiState.value = _uiState.value?.copy(isFavouriteToggledCamera = camera)
 		viewModelScope.launch {
-			changeCameraIsFavouriteUseCase.execute(camera = camera)
+			changeCameraIsFavouriteUseCase.execute(camera)
+			updateCamerasState()
 		}
 	}
 

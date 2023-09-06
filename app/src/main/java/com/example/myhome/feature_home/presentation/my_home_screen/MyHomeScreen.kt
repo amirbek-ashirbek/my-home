@@ -1,11 +1,11 @@
 package com.example.myhome.feature_home.presentation.my_home_screen
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
@@ -31,7 +31,6 @@ import androidx.compose.ui.Alignment.Companion.CenterEnd
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Alignment.Companion.TopCenter
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -39,6 +38,7 @@ import androidx.compose.ui.unit.sp
 import com.example.myhome.R
 import com.example.myhome.feature_home.presentation.my_home_screen.components.ButtonFavourite
 import com.example.myhome.feature_home.presentation.my_home_screen.components.CameraItem
+import com.example.myhome.feature_home.presentation.my_home_screen.components.DoorItem
 import com.example.myhome.feature_home.presentation.my_home_screen.components.MyHomeHeader
 import com.example.myhome.realm.model.CameraRealm
 import com.example.myhome.ui.theme.Blue500
@@ -116,11 +116,7 @@ fun MyHomeScreen(
 						)
 					}
 					1 -> {
-						Box(
-							modifier = Modifier
-								.fillMaxSize()
-								.background(color = Color.Green)
-						)
+						DoorsTabContent()
 					}
 				}
 			}
@@ -147,7 +143,6 @@ fun CamerasTabContent(
 	Box(
 		modifier = Modifier
 			.pullRefresh(camerasPullRefreshState)
-			.padding(top = 16.dp)
 	) {
 		if (camerasAreLoading) {
 			Box(modifier = Modifier.fillMaxSize()) {
@@ -159,6 +154,7 @@ fun CamerasTabContent(
 					.padding(horizontal = 21.dp)
 					.verticalScroll(state = scrollState)
 			) {
+				Spacer(modifier = Modifier.height(16.dp))
 				cameras?.forEach { (room, camerasByRoom) ->
 					if (!room.isNullOrEmpty()) {
 						Text(
@@ -199,5 +195,20 @@ fun CamerasTabContent(
 
 @Composable
 fun DoorsTabContent() {
-
+	Box(
+		modifier = Modifier
+			.fillMaxSize()
+	) {
+		Column(
+			modifier = Modifier
+				.fillMaxWidth()
+				.padding(horizontal = 21.dp)
+		) {
+			Spacer(modifier = Modifier.height(18.dp))
+			DoorItem(
+				name = "hello - hello",
+				snapshot = ""
+			)
+		}
+	}
 }
