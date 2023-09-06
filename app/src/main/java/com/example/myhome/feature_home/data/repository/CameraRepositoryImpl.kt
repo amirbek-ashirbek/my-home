@@ -3,7 +3,7 @@ package com.example.myhome.feature_home.data.repository
 import com.example.myhome.feature_home.data.remote.HomeApi
 import com.example.myhome.feature_home.data.remote.model.camera.CamerasResponse
 import com.example.myhome.feature_home.domain.repository.CameraRepository
-import com.example.myhome.realm.model.CameraRealm
+import com.example.myhome.realm.model.Camera
 import com.example.myhome.util.Response
 import io.realm.kotlin.Realm
 import io.realm.kotlin.ext.query
@@ -19,7 +19,7 @@ class CameraRepositoryImpl @Inject constructor(
 	private val realm: Realm
 ) : CameraRepository {
 
-	override fun getCamerasFromNetwork(): Flow<Response<List<CameraRealm>>> = flow {
+	override fun getCamerasFromNetwork(): Flow<Response<List<Camera>>> = flow {
 		try {
 			val camerasResponse = homeApi.getCameras()
 			val cameras = CamerasResponse.toCameras(camerasResponse)
@@ -29,17 +29,17 @@ class CameraRepositoryImpl @Inject constructor(
 		}
 	}.flowOn(Dispatchers.IO)
 
-	override fun getCamerasFromDatabase(): Flow<List<CameraRealm>> {
-		return realm.query<CameraRealm>().asFlow().map { it.list }
+	override fun getCamerasFromDatabase(): Flow<List<Camera>> {
+		return realm.query<Camera>().asFlow().map { it.list }
 	}
 
-	override suspend fun insertCamera(camera: CameraRealm) {
+	override suspend fun insertCamera(camera: Camera) {
 		realm.write { copyToRealm(camera) }
 	}
 
-	override suspend fun updateCameraIsFavourite(camera: CameraRealm) {
+	override suspend fun updateCameraIsFavourite(camera: Camera) {
 		realm.writeBlocking {
-			val queriedCamera = query<CameraRealm>(query = "_id == $0", camera._id).first().find()
+			val queriedCamera = query<Camera>(query = "_id == $0", camera._id).first().find()
 			queriedCamera?.isFavourite = !queriedCamera?.isFavourite!!
 		}
 	}

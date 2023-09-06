@@ -1,7 +1,7 @@
 package com.example.myhome.feature_home.data.remote.model.camera
 
 
-import com.example.myhome.realm.model.CameraRealm
+import com.example.myhome.realm.model.Camera
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -14,21 +14,21 @@ data class CamerasResponse(
 ) {
 
     companion object {
-        fun toCameras(camerasResponse: CamerasResponse): List<CameraRealm> {
-            val cameraRealmList = mutableListOf<CameraRealm>()
+        fun toCameras(camerasResponse: CamerasResponse): List<Camera> {
+            val cameraList = mutableListOf<Camera>()
 
             camerasResponse.camerasData.cameras.forEach { cameraResponse ->
-                val cameraRealm = CameraRealm()
-                cameraRealm.cameraId = cameraResponse.id
-                cameraRealm.name = cameraResponse.name
-                cameraRealm.room = cameraResponse.room ?: ""
-                cameraRealm.snapshot = cameraResponse.snapshot
-                cameraRealm.isFavourite = cameraResponse.favorites
-                cameraRealm.isRecording = cameraResponse.rec
-                cameraRealmList.add(cameraRealm)
+                val camera = Camera()
+                camera.cameraId = cameraResponse.id
+                camera.name = cameraResponse.name
+                camera.room = cameraResponse.room ?: ""
+                camera.snapshot = cameraResponse.snapshot
+                camera.isFavourite = cameraResponse.favorites
+                camera.isRecording = cameraResponse.rec
+                cameraList.add(camera)
             }
 
-            return cameraRealmList
+            return cameraList
         }
     }
 }

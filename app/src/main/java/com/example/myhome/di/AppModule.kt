@@ -2,8 +2,8 @@ package com.example.myhome.di
 
 import android.content.Context
 import com.chuckerteam.chucker.api.ChuckerInterceptor
-import com.example.myhome.realm.model.CameraRealm
-import com.example.myhome.realm.model.DoorRealm
+import com.example.myhome.realm.model.Camera
+import com.example.myhome.realm.model.Door
 import com.example.myhome.feature_home.data.remote.HomeApi
 import com.example.myhome.feature_home.data.remote.HomeApiImpl
 import com.example.myhome.feature_home.data.repository.CameraRepositoryImpl
@@ -60,7 +60,7 @@ object AppModule {
 	@Singleton
 	fun provideRealm(): Realm {
 		val configuration = RealmConfiguration.Builder(
-			schema = setOf(CameraRealm::class, DoorRealm::class)
+			schema = setOf(Camera::class, Door::class)
 		)
 			.compactOnLaunch()
 			.build()

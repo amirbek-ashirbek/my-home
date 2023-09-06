@@ -40,7 +40,7 @@ import com.example.myhome.feature_home.presentation.my_home_screen.components.Bu
 import com.example.myhome.feature_home.presentation.my_home_screen.components.CameraItem
 import com.example.myhome.feature_home.presentation.my_home_screen.components.DoorItem
 import com.example.myhome.feature_home.presentation.my_home_screen.components.MyHomeHeader
-import com.example.myhome.realm.model.CameraRealm
+import com.example.myhome.realm.model.Camera
 import com.example.myhome.ui.theme.Blue500
 import kotlinx.coroutines.launch
 
@@ -127,10 +127,10 @@ fun MyHomeScreen(
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun CamerasTabContent(
-	cameras: Map<String?, List<CameraRealm>>?,
+	cameras: Map<String?, List<Camera>>?,
 	camerasAreLoading: Boolean,
 	onCamerasRefreshed: () -> Unit,
-	onIsFavouriteButtonClicked: (CameraRealm) -> Unit
+	onIsFavouriteButtonClicked: (Camera) -> Unit
 ) {
 
 	val camerasPullRefreshState = rememberPullRefreshState(

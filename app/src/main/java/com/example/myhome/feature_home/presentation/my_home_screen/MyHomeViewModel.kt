@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.myhome.feature_home.domain.use_case.ChangeCameraIsFavouriteUseCase
 import com.example.myhome.feature_home.domain.use_case.GetCamerasUseCase
-import com.example.myhome.realm.model.CameraRealm
+import com.example.myhome.realm.model.Camera
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -42,7 +42,7 @@ class MyHomeViewModel @Inject constructor(
 	private fun updateCamerasState() {
 		viewModelScope.launch {
 			getCamerasUseCase.execute().collect { cameras ->
-				val camerasGroupedByRoom: Map<String?, List<CameraRealm>> = cameras.groupBy { it.room }
+				val camerasGroupedByRoom: Map<String?, List<Camera>> = cameras.groupBy { it.room }
 				_uiState.value = _uiState.value?.copy(
 					cameras = camerasGroupedByRoom,
 					camerasAreLoading = false
@@ -51,7 +51,7 @@ class MyHomeViewModel @Inject constructor(
 		}
 	}
 
-	private fun handleCameraFavouriteToggled(camera: CameraRealm) {
+	private fun handleCameraFavouriteToggled(camera: Camera) {
 		_uiState.value = _uiState.value?.copy(isFavouriteToggledCamera = camera)
 		viewModelScope.launch {
 			changeCameraIsFavouriteUseCase.execute(camera)
