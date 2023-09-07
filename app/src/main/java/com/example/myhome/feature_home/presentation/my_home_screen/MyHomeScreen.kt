@@ -149,9 +149,6 @@ fun MyHomeScreen(
 							onLockClicked = {  door ->
 								onMyHomeEvent(MyHomeEvent.DoorLockClicked(door = door))
 							}
-//							onLockClicked = { door ->
-//								onMyHomeEvent(MyHomeEvent.DoorIsLockedToggled(door = door))
-//							}
 						)
 					}
 				}
