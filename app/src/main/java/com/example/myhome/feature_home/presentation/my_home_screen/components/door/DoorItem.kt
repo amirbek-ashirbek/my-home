@@ -1,4 +1,4 @@
-package com.example.myhome.feature_home.presentation.my_home_screen.components
+package com.example.myhome.feature_home.presentation.my_home_screen.components.door
 
 import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.animation.core.animateFloat
@@ -7,6 +7,7 @@ import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -42,6 +43,7 @@ fun DoorItem(
 	snapshot: String?,
 	isLocked: Boolean,
 	isFromDatabase: Boolean,
+	onLockClicked: () -> Unit,
 	modifier : Modifier = Modifier
 ) {
 
@@ -60,7 +62,7 @@ fun DoorItem(
 
 	Card(
 		shape = RoundedCornerShape(12.dp),
-		elevation = 3.dp,
+		elevation = 1.dp,
 		backgroundColor = MaterialTheme.colors.background,
 		modifier = Modifier
 			.fillMaxWidth()
@@ -114,16 +116,23 @@ fun DoorItem(
 						)
 					}
 				}
-				if (isLocked) {
-					Image(
-						painter = painterResource(id = R.drawable.icon_lock),
-						contentDescription = "Lock icon"
-					)
-				} else {
-					Image(
-						painter = painterResource(id = R.drawable.icon_lock_unlocked),
-						contentDescription = "Lock icon"
-					)
+				Box(
+					modifier = Modifier
+						.clickable(
+							onClick = onLockClicked
+						)
+				) {
+					if (isLocked) {
+						Image(
+							painter = painterResource(id = R.drawable.icon_lock),
+							contentDescription = "Lock icon"
+						)
+					} else {
+						Image(
+							painter = painterResource(id = R.drawable.icon_lock_unlocked),
+							contentDescription = "Lock icon"
+						)
+					}
 				}
 			}
 		}

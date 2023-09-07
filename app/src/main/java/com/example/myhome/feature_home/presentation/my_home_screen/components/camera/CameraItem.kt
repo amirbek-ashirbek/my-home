@@ -67,7 +67,7 @@ fun CameraItem(
 	) {
 		Card(
 			shape = RoundedCornerShape(12.dp),
-			elevation = 3.dp,
+			elevation = 1.dp,
 			backgroundColor = MaterialTheme.colors.background,
 			modifier = Modifier
 				.fillMaxSize()

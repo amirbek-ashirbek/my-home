@@ -7,5 +7,6 @@ sealed class MyHomeEvent {
 	data class CameraIsFavouriteToggled(val camera: Camera) : MyHomeEvent()
 	object CamerasPullRefreshed : MyHomeEvent()
 	data class DoorIsFavouriteToggled(val door: Door) : MyHomeEvent()
+	data class DoorIsLockedToggled(val door: Door) : MyHomeEvent()
 	object DoorsPullRefreshed : MyHomeEvent()
 }

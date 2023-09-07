@@ -37,7 +37,7 @@ import androidx.compose.ui.unit.sp
 import com.example.myhome.R
 import com.example.myhome.feature_home.presentation.my_home_screen.components.ButtonFavourite
 import com.example.myhome.feature_home.presentation.my_home_screen.components.CameraItem
-import com.example.myhome.feature_home.presentation.my_home_screen.components.DoorItem
+import com.example.myhome.feature_home.presentation.my_home_screen.components.door.DoorItem
 import com.example.myhome.feature_home.presentation.my_home_screen.components.MyHomeHeader
 import com.example.myhome.feature_home.presentation.my_home_screen.components.door.DoorActionsRow
 import com.example.myhome.realm.model.Camera
@@ -123,6 +123,9 @@ fun MyHomeScreen(
 							onDoorsRefreshed = { onMyHomeEvent(MyHomeEvent.DoorsPullRefreshed) },
 							onIsFavouriteButtonClicked = { door ->
 								onMyHomeEvent(MyHomeEvent.DoorIsFavouriteToggled(door = door))
+							},
+							onLockClicked = { door ->
+								onMyHomeEvent(MyHomeEvent.DoorIsLockedToggled(door = door))
 							}
 						)
 					}
@@ -210,6 +213,7 @@ fun DoorsTabContent(
 	doorsAreLoading: Boolean,
 	onDoorsRefreshed: () -> Unit,
 	onIsFavouriteButtonClicked: (Door) -> Unit,
+	onLockClicked: (Door) -> Unit,
 	modifier: Modifier = Modifier
 ) {
 
@@ -248,7 +252,8 @@ fun DoorsTabContent(
 							name = door.name,
 							snapshot = door.snapshot,
 							isLocked = door.isLocked,
-							isFromDatabase = door.isFromDatabase
+							isFromDatabase = door.isFromDatabase,
+							onLockClicked = { onLockClicked(door) }
 						)
 					}
 					Spacer(modifier = Modifier.height(11.dp))

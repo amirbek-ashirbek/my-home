@@ -46,6 +46,13 @@ class DoorRepositoryImpl @Inject constructor(
 		}
 	}
 
+	override suspend fun updateDoorIsLocked(door: Door) {
+		realm.writeBlocking {
+			val queriedDoor = query<Door>(query = "_id == $0", door._id).first().find()
+			queriedDoor?.isLocked = !queriedDoor?.isLocked!!
+		}
+	}
+
 	override suspend fun updateDoors() {
 		val allDoors: RealmResults<Door> = realm.query<Door>().find()
 		val possibleNames = listOf("Подъезд 1", "Выход на пожарную лестницу", "Подъезд 2")
