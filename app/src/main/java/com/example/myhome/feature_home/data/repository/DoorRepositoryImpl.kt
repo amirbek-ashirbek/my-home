@@ -14,7 +14,6 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
-import kotlin.random.Random
 
 class DoorRepositoryImpl @Inject constructor(
 	private val homeApi: HomeApi,
@@ -56,6 +55,7 @@ class DoorRepositoryImpl @Inject constructor(
 	override suspend fun updateDoors() {
 		val allDoors: RealmResults<Door> = realm.query<Door>().find()
 		val possibleNames = listOf("Подъезд 1", "Выход на пожарную лестницу", "Подъезд 2")
+		var index = 0
 
 		allDoors.forEach { door ->
 			realm.write {
@@ -65,8 +65,8 @@ class DoorRepositoryImpl @Inject constructor(
 				if (latestDoor?.snapshot != null) {
 					latestDoor.name = "Домофон"
 				} else {
-					val randomIndex = Random.nextInt(possibleNames.size)
-					latestDoor?.name = possibleNames[randomIndex]
+					latestDoor?.name = possibleNames[index]
+					index++
 				}
 			}
 		}
