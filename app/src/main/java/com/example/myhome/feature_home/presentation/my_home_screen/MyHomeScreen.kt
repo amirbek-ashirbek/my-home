@@ -37,12 +37,12 @@ import androidx.compose.ui.unit.sp
 import com.example.myhome.R
 import com.example.myhome.feature_home.presentation.my_home_screen.components.ButtonFavourite
 import com.example.myhome.feature_home.presentation.my_home_screen.components.CameraItem
-import com.example.myhome.feature_home.presentation.my_home_screen.components.door.DoorItem
 import com.example.myhome.feature_home.presentation.my_home_screen.components.MyHomeHeader
 import com.example.myhome.feature_home.presentation.my_home_screen.components.door.DoorActionsRow
+import com.example.myhome.feature_home.presentation.my_home_screen.components.door.DoorItem
+import com.example.myhome.feature_home.presentation.my_home_screen.components.door.DoorLockDialog
 import com.example.myhome.realm.model.Camera
 import com.example.myhome.realm.model.Door
-import com.example.myhome.ui.theme.Blue500
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -61,6 +61,28 @@ fun MyHomeScreen(
 		initialPage = 0,
 		initialPageOffsetFraction = 0f
 	) { 2 }
+
+	val doorLockDialogIsVisible = uiState.doorLockDialogIsVisible
+
+	if (doorLockDialogIsVisible) {
+
+		val door = uiState.lockClickedDoor
+
+		if (door != null) {
+			val lock = stringResource(id = R.string.lock)
+			val unlock = stringResource(id = R.string.unlock)
+			val action = if (door.isLocked) unlock else lock
+			val dialogTitle = stringResource(id = R.string.confirm_action)
+			val dialogText = stringResource(id = R.string.lock_are_you_sure, action, "\"${door.name}\"")
+
+			DoorLockDialog(
+				dialogTitle = dialogTitle,
+				dialogText = dialogText,
+				onDismissRequest = { onMyHomeEvent(MyHomeEvent.DoorLockDialogDismissed) },
+				onConfirmClicked = { onMyHomeEvent(MyHomeEvent.DoorIsLockedToggled(door = door)) }
+			)
+		}
+	}
 
 	Surface(
 		color = MaterialTheme.colors.surface,
@@ -81,7 +103,7 @@ fun MyHomeScreen(
 				indicator = { tabPositions ->
 					TabRowDefaults.Indicator(
 						Modifier.tabIndicatorOffset(tabPositions[pagerState.currentPage]),
-						color = Blue500
+						color = MaterialTheme.colors.primary
 					)
 				}
 			) {
@@ -124,9 +146,12 @@ fun MyHomeScreen(
 							onIsFavouriteButtonClicked = { door ->
 								onMyHomeEvent(MyHomeEvent.DoorIsFavouriteToggled(door = door))
 							},
-							onLockClicked = { door ->
-								onMyHomeEvent(MyHomeEvent.DoorIsLockedToggled(door = door))
+							onLockClicked = {  door ->
+								onMyHomeEvent(MyHomeEvent.DoorLockClicked(door = door))
 							}
+//							onLockClicked = { door ->
+//								onMyHomeEvent(MyHomeEvent.DoorIsLockedToggled(door = door))
+//							}
 						)
 					}
 				}

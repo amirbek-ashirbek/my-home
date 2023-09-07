@@ -44,6 +44,15 @@ class MyHomeViewModel @Inject constructor(
 			is MyHomeEvent.DoorsPullRefreshed -> getDoors()
 			is MyHomeEvent.DoorIsFavouriteToggled -> handleDoorFavouriteToggled(event.door)
 			is MyHomeEvent.DoorIsLockedToggled -> handleDoorIsLockedToggled(event.door)
+			is MyHomeEvent.DoorLockClicked -> {
+				_uiState.value = _uiState.value?.copy(
+					doorLockDialogIsVisible = true,
+					lockClickedDoor = event.door
+				)
+			}
+			is MyHomeEvent.DoorLockDialogDismissed -> {
+				_uiState.value = _uiState.value?.copy(doorLockDialogIsVisible = false)
+			}
 		}
 	}
 
@@ -97,11 +106,12 @@ class MyHomeViewModel @Inject constructor(
 	}
 
 	private fun handleDoorIsLockedToggled(door: Door) {
-		_uiState.value = _uiState.value?.copy(isLockedToggledDoor = door)
+		_uiState.value = _uiState.value?.copy(lockClickedDoor = door)
 		viewModelScope.launch {
 			changeDoorIsLockedUseCase.execute(door)
 			updateDoorsState()
 		}
+		_uiState.value = _uiState.value?.copy(doorLockDialogIsVisible = false)
 	}
 
 }

@@ -116,22 +116,24 @@ fun DoorItem(
 						)
 					}
 				}
-				Box(
-					modifier = Modifier
-						.clickable(
-							onClick = onLockClicked
-						)
-				) {
-					if (isLocked) {
-						Image(
-							painter = painterResource(id = R.drawable.icon_lock),
-							contentDescription = "Lock icon"
-						)
-					} else {
-						Image(
-							painter = painterResource(id = R.drawable.icon_lock_unlocked),
-							contentDescription = "Lock icon"
-						)
+				if (isFromDatabase) {
+					Box(
+						modifier = Modifier
+							.clickable(
+								onClick = onLockClicked
+							)
+					) {
+						if (isLocked) {
+							Image(
+								painter = painterResource(id = R.drawable.icon_lock),
+								contentDescription = "Lock icon"
+							)
+						} else {
+							Image(
+								painter = painterResource(id = R.drawable.icon_lock_unlocked),
+								contentDescription = "Lock icon"
+							)
+						}
 					}
 				}
 			}

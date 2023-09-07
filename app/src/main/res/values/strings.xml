@@ -5,4 +5,10 @@
     <string name="cameras">Камеры</string>
     <string name="doors">Двери</string>
     <string name="online">В сети</string>
+    <string name="yes">Да</string>
+    <string name="cancel">Отменить</string>
+    <string name="confirm_action">Подтвердите действие</string>
+    <string name="lock_are_you_sure">Вы уверены, что хотите %s "%s"?</string>
+    <string name="lock">заблокировать</string>
+    <string name="unlock">разблокировать</string>
 </resources>
