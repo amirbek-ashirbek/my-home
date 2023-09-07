@@ -7,7 +7,9 @@ import com.example.myhome.realm.model.Door
 import com.example.myhome.feature_home.data.remote.HomeApi
 import com.example.myhome.feature_home.data.remote.HomeApiImpl
 import com.example.myhome.feature_home.data.repository.CameraRepositoryImpl
+import com.example.myhome.feature_home.data.repository.DoorRepositoryImpl
 import com.example.myhome.feature_home.domain.repository.CameraRepository
+import com.example.myhome.feature_home.domain.repository.DoorRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -71,6 +73,12 @@ object AppModule {
 	@Singleton
 	fun provideCameraRepository(homeApi: HomeApi, realm: Realm): CameraRepository {
 		return CameraRepositoryImpl(homeApi = homeApi, realm = realm)
+	}
+
+	@Provides
+	@Singleton
+	fun provideDoorRepository(homeApi: HomeApi, realm: Realm) : DoorRepository {
+		return DoorRepositoryImpl(homeApi = homeApi, realm = realm)
 	}
 
 }

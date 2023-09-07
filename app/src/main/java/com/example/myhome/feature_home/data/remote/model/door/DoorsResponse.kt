@@ -24,6 +24,7 @@ data class DoorsResponse(
 				door.room = doorResponse.room
 				door.snapshot = doorResponse.snapshot
 				door.isFavourite = doorResponse.favorites
+				door.isFromDatabase = false
 				doorsList.add(door)
 			}
 			return doorsList

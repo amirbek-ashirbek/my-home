@@ -8,4 +8,8 @@ interface DoorRepository {
 
 	fun getDoorsFromNetwork(): Flow<Response<List<Door>>>
 
+	fun getDoorsFromDatabase(): Flow<List<Door>>
+
+	suspend fun insertDoor(door: Door)
+
 }

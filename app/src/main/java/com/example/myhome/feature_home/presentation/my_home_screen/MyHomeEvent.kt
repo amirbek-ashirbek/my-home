@@ -5,4 +5,5 @@ import com.example.myhome.realm.model.Camera
 sealed class MyHomeEvent {
 	data class CameraIsFavouriteToggled(val camera: Camera) : MyHomeEvent()
 	object CamerasPullRefreshed : MyHomeEvent()
+	object DoorsPullRefreshed : MyHomeEvent()
 }

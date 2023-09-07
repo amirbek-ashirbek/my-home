@@ -15,5 +15,5 @@ data class DoorsData(
     @SerialName("room")
     val room: String?,
     @SerialName("snapshot")
-    val snapshot: String?
+    val snapshot: String? = null
 )

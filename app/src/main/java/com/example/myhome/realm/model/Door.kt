@@ -12,4 +12,6 @@ class Door : RealmObject {
 	var room: String? = null
 	var snapshot: String? = null
 	var isFavourite: Boolean = false
+	var isLocked: Boolean = true
+	var isFromDatabase: Boolean = true
 }
