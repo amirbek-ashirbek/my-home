@@ -14,28 +14,43 @@ class GetDoorsUseCase @Inject constructor(
 ) {
 
 	suspend fun execute(): Flow<List<Door>> {
+		val doorsFromDatabase = getDoorsFromDatabase()
 
-		val doorsFromDatabase = doorRepository.getDoorsFromDatabase().firstOrNull()
-
-		return if (!doorsFromDatabase.isNullOrEmpty()) {
+		return if (doorsFromDatabase.isNotEmpty()) {
 			flowOf(doorsFromDatabase)
 		} else {
-			doorRepository.getDoorsFromNetwork().map { response ->
+			getDoorsFromNetwork()
+		}
+	}
+
+	private suspend fun getDoorsFromDatabase(): List<Door> {
+		return doorRepository.getDoorsFromDatabase().firstOrNull() ?: emptyList()
+	}
+
+	private suspend fun getDoorsFromNetwork(): Flow<List<Door>> {
+		return doorRepository.getDoorsFromNetwork()
+			.map { response ->
 				when (response) {
 					is Response.Success -> {
 						response.data?.let { doors ->
-							doors.forEach {  door ->
-								doorRepository.insertDoor(door = door)
-							}
+							insertDoorsIntoDatabase(doors)
 						}
+						updateDoorsInDatabase()
 						response.data ?: emptyList()
 					}
-					is Response.Error -> {
-						emptyList()
-					}
+					is Response.Error -> emptyList()
 				}
 			}
-		}
-
 	}
+
+	private suspend fun insertDoorsIntoDatabase(doors: List<Door>) {
+		doors.forEach { door ->
+			doorRepository.insertDoor(door = door)
+		}
+	}
+
+	private suspend fun updateDoorsInDatabase() {
+		doorRepository.updateDoors()
+	}
+
 }

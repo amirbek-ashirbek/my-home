@@ -12,4 +12,8 @@ interface DoorRepository {
 
 	suspend fun insertDoor(door: Door)
 
+	suspend fun updateDoorIsFavourite(door: Door)
+
+	suspend fun updateDoors()
+
 }

@@ -39,6 +39,7 @@ import com.example.myhome.feature_home.presentation.my_home_screen.components.Bu
 import com.example.myhome.feature_home.presentation.my_home_screen.components.CameraItem
 import com.example.myhome.feature_home.presentation.my_home_screen.components.DoorItem
 import com.example.myhome.feature_home.presentation.my_home_screen.components.MyHomeHeader
+import com.example.myhome.feature_home.presentation.my_home_screen.components.door.DoorActionsRow
 import com.example.myhome.realm.model.Camera
 import com.example.myhome.realm.model.Door
 import com.example.myhome.ui.theme.Blue500
@@ -111,7 +112,7 @@ fun MyHomeScreen(
 							camerasAreLoading = uiState.camerasAreLoading,
 							onCamerasRefreshed = { onMyHomeEvent(MyHomeEvent.CamerasPullRefreshed) },
 							onIsFavouriteButtonClicked = { camera ->
-								onMyHomeEvent(MyHomeEvent.CameraIsFavouriteToggled(camera))
+								onMyHomeEvent(MyHomeEvent.CameraIsFavouriteToggled(camera = camera))
 							}
 						)
 					}
@@ -119,7 +120,10 @@ fun MyHomeScreen(
 						DoorsTabContent(
 							doors = uiState.doors,
 							doorsAreLoading = uiState.doorsAreLoading,
-							onDoorsRefreshed = { onMyHomeEvent(MyHomeEvent.DoorsPullRefreshed) }
+							onDoorsRefreshed = { onMyHomeEvent(MyHomeEvent.DoorsPullRefreshed) },
+							onIsFavouriteButtonClicked = { door ->
+								onMyHomeEvent(MyHomeEvent.DoorIsFavouriteToggled(door = door))
+							}
 						)
 					}
 				}
@@ -191,6 +195,7 @@ fun CamerasTabContent(
 			PullRefreshIndicator(
 				refreshing = camerasAreLoading,
 				state = camerasPullRefreshState,
+				contentColor = MaterialTheme.colors.primary,
 				modifier = Modifier
 					.align(TopCenter)
 			)
@@ -204,6 +209,7 @@ fun DoorsTabContent(
 	doors: List<Door>?,
 	doorsAreLoading: Boolean,
 	onDoorsRefreshed: () -> Unit,
+	onIsFavouriteButtonClicked: (Door) -> Unit,
 	modifier: Modifier = Modifier
 ) {
 
@@ -230,17 +236,28 @@ fun DoorsTabContent(
 			) {
 				Spacer(modifier = Modifier.height(18.dp))
 				doors?.forEach { door ->
-					DoorItem(
-						name = door.name,
-						snapshot = door.snapshot,
-						isLocked = door.isLocked
-					)
+					Box {
+						DoorActionsRow(
+							isFavourite = door.isFavourite,
+							onEditButtonClicked = {},
+							onIsFavouriteButtonClicked = { onIsFavouriteButtonClicked(door) },
+							modifier = Modifier
+								.align(CenterEnd)
+						)
+						DoorItem(
+							name = door.name,
+							snapshot = door.snapshot,
+							isLocked = door.isLocked,
+							isFromDatabase = door.isFromDatabase
+						)
+					}
 					Spacer(modifier = Modifier.height(11.dp))
 				}
 			}
 			PullRefreshIndicator(
 				refreshing = doorsAreLoading,
 				state = doorsPullRefreshState,
+				contentColor = MaterialTheme.colors.primary,
 				modifier = Modifier
 					.align(TopCenter)
 			)

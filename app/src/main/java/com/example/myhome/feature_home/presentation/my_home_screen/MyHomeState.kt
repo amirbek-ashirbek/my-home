@@ -9,5 +9,7 @@ data class MyHomeState(
 	val camerasAreLoading: Boolean = false,
 	val camerasError: Boolean = false,
 	val doors: List<Door>? = null,
-	val doorsAreLoading: Boolean = false
+	val isFavouriteToggledDoor: Door? = null,
+	val doorsAreLoading: Boolean = false,
+	val doorsError: Boolean = false
 )

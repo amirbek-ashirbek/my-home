@@ -5,9 +5,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.myhome.feature_home.domain.use_case.ChangeCameraIsFavouriteUseCase
+import com.example.myhome.feature_home.domain.use_case.ChangeDoorIsFavouriteUseCase
 import com.example.myhome.feature_home.domain.use_case.GetCamerasUseCase
 import com.example.myhome.feature_home.domain.use_case.GetDoorsUseCase
 import com.example.myhome.realm.model.Camera
+import com.example.myhome.realm.model.Door
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -16,7 +18,8 @@ import javax.inject.Inject
 class MyHomeViewModel @Inject constructor(
 	private val getCamerasUseCase: GetCamerasUseCase,
 	private val changeCameraIsFavouriteUseCase: ChangeCameraIsFavouriteUseCase,
-	private val getDoorsUseCase: GetDoorsUseCase
+	private val getDoorsUseCase: GetDoorsUseCase,
+	private val changeDoorIsFavouriteUseCase: ChangeDoorIsFavouriteUseCase
 ) : ViewModel() {
 
 	private val _uiState = MutableLiveData(
@@ -37,6 +40,7 @@ class MyHomeViewModel @Inject constructor(
 			is MyHomeEvent.CamerasPullRefreshed -> getCameras()
 			is MyHomeEvent.CameraIsFavouriteToggled -> handleCameraFavouriteToggled(event.camera)
 			is MyHomeEvent.DoorsPullRefreshed -> getDoors()
+			is MyHomeEvent.DoorIsFavouriteToggled -> handleDoorFavouriteToggled(event.door)
 		}
 	}
 
@@ -78,6 +82,14 @@ class MyHomeViewModel @Inject constructor(
 					doorsAreLoading = false
 				)
 			}
+		}
+	}
+
+	private fun handleDoorFavouriteToggled(door: Door) {
+		_uiState.value = _uiState.value?.copy(isFavouriteToggledDoor = door)
+		viewModelScope.launch {
+			changeDoorIsFavouriteUseCase.execute(door)
+			updateDoorsState()
 		}
 	}
 
