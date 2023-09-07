@@ -25,7 +25,7 @@ fun ButtonFavourite(
 		modifier = modifier
 			.size(36.dp)
 			.border(
-				width = 1.dp,
+				width = 0.3.dp,
 				color = Color(0xFFDBDBDB),
 				shape = CircleShape
 			)

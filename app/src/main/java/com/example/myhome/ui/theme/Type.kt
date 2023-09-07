@@ -21,9 +21,8 @@ val CirceFont = FontFamily(
 val Typography = Typography(
 	defaultFontFamily = CirceFont,
 	body1 = TextStyle(
-		fontFamily = FontFamily.Default,
 		fontWeight = FontWeight.Normal,
-		fontSize = 16.sp
+		fontSize = 17.sp,
 	),
 	h1 = TextStyle(
 		fontSize = 21.sp,

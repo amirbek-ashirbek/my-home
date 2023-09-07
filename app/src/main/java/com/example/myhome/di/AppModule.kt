@@ -2,12 +2,14 @@ package com.example.myhome.di
 
 import android.content.Context
 import com.chuckerteam.chucker.api.ChuckerInterceptor
-import com.example.myhome.realm.model.CameraRealm
-import com.example.myhome.realm.model.DoorRealm
+import com.example.myhome.realm.model.Camera
+import com.example.myhome.realm.model.Door
 import com.example.myhome.feature_home.data.remote.HomeApi
 import com.example.myhome.feature_home.data.remote.HomeApiImpl
 import com.example.myhome.feature_home.data.repository.CameraRepositoryImpl
+import com.example.myhome.feature_home.data.repository.DoorRepositoryImpl
 import com.example.myhome.feature_home.domain.repository.CameraRepository
+import com.example.myhome.feature_home.domain.repository.DoorRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -60,7 +62,7 @@ object AppModule {
 	@Singleton
 	fun provideRealm(): Realm {
 		val configuration = RealmConfiguration.Builder(
-			schema = setOf(CameraRealm::class, DoorRealm::class)
+			schema = setOf(Camera::class, Door::class)
 		)
 			.compactOnLaunch()
 			.build()
@@ -71,6 +73,12 @@ object AppModule {
 	@Singleton
 	fun provideCameraRepository(homeApi: HomeApi, realm: Realm): CameraRepository {
 		return CameraRepositoryImpl(homeApi = homeApi, realm = realm)
+	}
+
+	@Provides
+	@Singleton
+	fun provideDoorRepository(homeApi: HomeApi, realm: Realm) : DoorRepository {
+		return DoorRepositoryImpl(homeApi = homeApi, realm = realm)
 	}
 
 }

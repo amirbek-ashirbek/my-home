@@ -5,8 +5,12 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.myhome.feature_home.domain.use_case.ChangeCameraIsFavouriteUseCase
+import com.example.myhome.feature_home.domain.use_case.ChangeDoorIsFavouriteUseCase
+import com.example.myhome.feature_home.domain.use_case.ChangeDoorIsLockedUseCase
 import com.example.myhome.feature_home.domain.use_case.GetCamerasUseCase
-import com.example.myhome.realm.model.CameraRealm
+import com.example.myhome.feature_home.domain.use_case.GetDoorsUseCase
+import com.example.myhome.realm.model.Camera
+import com.example.myhome.realm.model.Door
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -15,22 +19,31 @@ import javax.inject.Inject
 class MyHomeViewModel @Inject constructor(
 	private val getCamerasUseCase: GetCamerasUseCase,
 	private val changeCameraIsFavouriteUseCase: ChangeCameraIsFavouriteUseCase,
+	private val getDoorsUseCase: GetDoorsUseCase,
+	private val changeDoorIsFavouriteUseCase: ChangeDoorIsFavouriteUseCase,
+	private val changeDoorIsLockedUseCase: ChangeDoorIsLockedUseCase
 ) : ViewModel() {
 
 	private val _uiState = MutableLiveData(
-		MyHomeState(camerasAreLoading = true)
+		MyHomeState(
+			camerasAreLoading = true,
+			doorsAreLoading = true
+		)
 	)
 	val uiState: LiveData<MyHomeState> = _uiState
 
 	init {
 		getCameras()
+		getDoors()
 	}
 
 	fun onEvent(event: MyHomeEvent) {
 		when (event) {
 			is MyHomeEvent.CamerasPullRefreshed -> getCameras()
-
 			is MyHomeEvent.CameraIsFavouriteToggled -> handleCameraFavouriteToggled(event.camera)
+			is MyHomeEvent.DoorsPullRefreshed -> getDoors()
+			is MyHomeEvent.DoorIsFavouriteToggled -> handleDoorFavouriteToggled(event.door)
+			is MyHomeEvent.DoorIsLockedToggled -> handleDoorIsLockedToggled(event.door)
 		}
 	}
 
@@ -42,7 +55,7 @@ class MyHomeViewModel @Inject constructor(
 	private fun updateCamerasState() {
 		viewModelScope.launch {
 			getCamerasUseCase.execute().collect { cameras ->
-				val camerasGroupedByRoom: Map<String?, List<CameraRealm>> = cameras.groupBy { it.room }
+				val camerasGroupedByRoom: Map<String?, List<Camera>> = cameras.groupBy { it.room }
 				_uiState.value = _uiState.value?.copy(
 					cameras = camerasGroupedByRoom,
 					camerasAreLoading = false
@@ -51,11 +64,43 @@ class MyHomeViewModel @Inject constructor(
 		}
 	}
 
-	private fun handleCameraFavouriteToggled(camera: CameraRealm) {
+	private fun handleCameraFavouriteToggled(camera: Camera) {
 		_uiState.value = _uiState.value?.copy(isFavouriteToggledCamera = camera)
 		viewModelScope.launch {
 			changeCameraIsFavouriteUseCase.execute(camera)
 			updateCamerasState()
+		}
+	}
+
+	private fun getDoors() {
+		_uiState.value = _uiState.value?.copy(doorsAreLoading = true)
+		updateDoorsState()
+	}
+
+	private fun updateDoorsState() {
+		viewModelScope.launch {
+			getDoorsUseCase.execute().collect { doors ->
+				_uiState.value = _uiState.value?.copy(
+					doors = doors,
+					doorsAreLoading = false
+				)
+			}
+		}
+	}
+
+	private fun handleDoorFavouriteToggled(door: Door) {
+		_uiState.value = _uiState.value?.copy(isFavouriteToggledDoor = door)
+		viewModelScope.launch {
+			changeDoorIsFavouriteUseCase.execute(door)
+			updateDoorsState()
+		}
+	}
+
+	private fun handleDoorIsLockedToggled(door: Door) {
+		_uiState.value = _uiState.value?.copy(isLockedToggledDoor = door)
+		viewModelScope.launch {
+			changeDoorIsLockedUseCase.execute(door)
+			updateDoorsState()
 		}
 	}
 

@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -38,6 +39,7 @@ fun CameraItem(
 	snapshot: String,
 	isRecording: Boolean,
 	isFavourite: Boolean,
+	isFromDatabase: Boolean,
 	modifier: Modifier = Modifier
 ) {
 	var isRevealed by remember { mutableStateOf(false) }
@@ -65,7 +67,8 @@ fun CameraItem(
 	) {
 		Card(
 			shape = RoundedCornerShape(12.dp),
-			elevation = 3.dp,
+			elevation = 1.dp,
+			backgroundColor = MaterialTheme.colors.background,
 			modifier = Modifier
 				.fillMaxSize()
 		) {
@@ -74,14 +77,25 @@ fun CameraItem(
 					modifier = Modifier
 						.fillMaxSize()
 				) {
-					AsyncImage(
-						model = snapshot,
-						contentDescription = null,
-						contentScale = ContentScale.FillBounds,
-						modifier = Modifier
-							.fillMaxWidth()
-							.height(207.dp)
-					)
+					if (isFromDatabase) {
+						Image(
+							painter = painterResource(id = R.drawable.camera_image),
+							contentDescription = null,
+							contentScale = ContentScale.FillBounds,
+							modifier = Modifier
+								.fillMaxWidth()
+								.height(207.dp)
+						)
+					} else {
+						AsyncImage(
+							model = snapshot,
+							contentDescription = null,
+							contentScale = ContentScale.FillBounds,
+							modifier = Modifier
+								.fillMaxWidth()
+								.height(207.dp)
+						)
+					}
 					if (isRecording) {
 						Box(
 							modifier = Modifier
