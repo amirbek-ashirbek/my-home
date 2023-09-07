@@ -14,4 +14,6 @@ interface CameraRepository {
 
 	suspend fun updateCameraIsFavourite(camera: Camera)
 
+	suspend fun updateCameras()
+
 }

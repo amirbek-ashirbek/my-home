@@ -25,6 +25,7 @@ data class CamerasResponse(
                 camera.snapshot = cameraResponse.snapshot
                 camera.isFavourite = cameraResponse.favorites
                 camera.isRecording = cameraResponse.rec
+                camera.isFromDatabase = false
                 cameraList.add(camera)
             }
 

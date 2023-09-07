@@ -13,4 +13,5 @@ class Camera : RealmObject {
 	var snapshot: String = ""
 	var isFavourite: Boolean = false
 	var isRecording: Boolean = false
+	var isFromDatabase: Boolean = true
 }

@@ -1,6 +1,5 @@
 package com.example.myhome.feature_home.domain.use_case
 
-import android.util.Log
 import com.example.myhome.feature_home.domain.repository.CameraRepository
 import com.example.myhome.realm.model.Camera
 import com.example.myhome.util.Response
@@ -15,27 +14,43 @@ class GetCamerasUseCase @Inject constructor(
 ) {
 
 	suspend fun execute(): Flow<List<Camera>> {
+		val camerasFromDatabase = getCamerasFromDatabase()
 
-		val camerasFromDatabase = cameraRepository.getCamerasFromDatabase().firstOrNull()
-		Log.d("camerasFromDatabase!!!", "$camerasFromDatabase")
+		return if (camerasFromDatabase.isNotEmpty()) {
+			flowOf(camerasFromDatabase)
+		} else {
+			fetchCamerasFromNetwork()
+		}
+	}
 
-		return if (camerasFromDatabase.isNullOrEmpty()) {
-			cameraRepository.getCamerasFromNetwork().map { response ->
+	private suspend fun getCamerasFromDatabase(): List<Camera> {
+		return cameraRepository.getCamerasFromDatabase().firstOrNull() ?: emptyList()
+	}
+
+	private suspend fun fetchCamerasFromNetwork(): Flow<List<Camera>> {
+		return cameraRepository.getCamerasFromNetwork()
+			.map { response ->
 				when (response) {
 					is Response.Success -> {
 						response.data?.let { cameras ->
-							cameras.forEach {  camera ->
-								cameraRepository.insertCamera(camera)
-							}
+							insertCamerasIntoDatabase(cameras)
 						}
+						updateCamerasInDatabase()
 						response.data ?: emptyList()
 					}
 					is Response.Error -> emptyList()
 				}
 			}
-		} else {
-			flowOf(camerasFromDatabase)
+	}
+
+	private suspend fun insertCamerasIntoDatabase(cameras: List<Camera>) {
+		cameras.forEach { camera ->
+			cameraRepository.insertCamera(camera)
 		}
+	}
+
+	private suspend fun updateCamerasInDatabase() {
+		cameraRepository.updateCameras()
 	}
 
 }

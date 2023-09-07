@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
@@ -41,6 +40,7 @@ import com.example.myhome.feature_home.presentation.my_home_screen.components.Ca
 import com.example.myhome.feature_home.presentation.my_home_screen.components.DoorItem
 import com.example.myhome.feature_home.presentation.my_home_screen.components.MyHomeHeader
 import com.example.myhome.realm.model.Camera
+import com.example.myhome.realm.model.Door
 import com.example.myhome.ui.theme.Blue500
 import kotlinx.coroutines.launch
 
@@ -116,7 +116,11 @@ fun MyHomeScreen(
 						)
 					}
 					1 -> {
-						DoorsTabContent()
+						DoorsTabContent(
+							doors = uiState.doors,
+							doorsAreLoading = uiState.doorsAreLoading,
+							onDoorsRefreshed = { onMyHomeEvent(MyHomeEvent.DoorsPullRefreshed) }
+						)
 					}
 				}
 			}
@@ -175,7 +179,8 @@ fun CamerasTabContent(
 									name = camera.name,
 									snapshot = camera.snapshot,
 									isRecording = camera.isRecording,
-									isFavourite = camera.isFavourite
+									isFavourite = camera.isFavourite,
+									isFromDatabase = camera.isFromDatabase
 								)
 							}
 							Spacer(modifier = Modifier.height(12.dp))
@@ -193,21 +198,51 @@ fun CamerasTabContent(
 	}
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun DoorsTabContent() {
+fun DoorsTabContent(
+	doors: List<Door>?,
+	doorsAreLoading: Boolean,
+	onDoorsRefreshed: () -> Unit,
+	modifier: Modifier = Modifier
+) {
+
+	val doorsPullRefreshState = rememberPullRefreshState(
+		refreshing = doorsAreLoading,
+		onRefresh = onDoorsRefreshed
+	)
+	val scrollState = rememberScrollState()
+
 	Box(
 		modifier = Modifier
 			.fillMaxSize()
+			.pullRefresh(state = doorsPullRefreshState)
 	) {
-		Column(
-			modifier = Modifier
-				.fillMaxWidth()
-				.padding(horizontal = 21.dp)
-		) {
-			Spacer(modifier = Modifier.height(18.dp))
-			DoorItem(
-				name = "hello - hello",
-				snapshot = ""
+		if (doorsAreLoading) {
+			Box(modifier = Modifier.fillMaxSize()) {
+				CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+			}
+		} else {
+			Column(
+				modifier = Modifier
+					.padding(horizontal = 21.dp)
+					.verticalScroll(state = scrollState)
+			) {
+				Spacer(modifier = Modifier.height(18.dp))
+				doors?.forEach { door ->
+					DoorItem(
+						name = door.name,
+						snapshot = door.snapshot,
+						isLocked = door.isLocked
+					)
+					Spacer(modifier = Modifier.height(11.dp))
+				}
+			}
+			PullRefreshIndicator(
+				refreshing = doorsAreLoading,
+				state = doorsPullRefreshState,
+				modifier = Modifier
+					.align(TopCenter)
 			)
 		}
 	}
