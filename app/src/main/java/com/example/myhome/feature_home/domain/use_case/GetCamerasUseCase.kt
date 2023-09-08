@@ -4,6 +4,7 @@ import com.example.myhome.feature_home.domain.repository.CameraRepository
 import com.example.myhome.realm.model.Camera
 import com.example.myhome.util.Response
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
@@ -16,10 +17,13 @@ class GetCamerasUseCase @Inject constructor(
 	suspend fun execute(): Flow<List<Camera>> {
 		val camerasFromDatabase = getCamerasFromDatabase()
 
-		return if (camerasFromDatabase.isNotEmpty()) {
-			flowOf(camerasFromDatabase)
+		if (camerasFromDatabase.isNotEmpty()) {
+			return flowOf(camerasFromDatabase)
 		} else {
-			fetchCamerasFromNetwork()
+			val camerasFromNetwork = getCamerasFromNetwork().first()
+			insertCamerasIntoDatabase(cameras = camerasFromNetwork)
+			updateCamerasInDatabase()
+			return flowOf(getCamerasFromDatabase())
 		}
 	}
 
@@ -27,17 +31,11 @@ class GetCamerasUseCase @Inject constructor(
 		return cameraRepository.getCamerasFromDatabase().firstOrNull() ?: emptyList()
 	}
 
-	private suspend fun fetchCamerasFromNetwork(): Flow<List<Camera>> {
+	private fun getCamerasFromNetwork(): Flow<List<Camera>> {
 		return cameraRepository.getCamerasFromNetwork()
 			.map { response ->
 				when (response) {
-					is Response.Success -> {
-						response.data?.let { cameras ->
-							insertCamerasIntoDatabase(cameras)
-						}
-						updateCamerasInDatabase()
-						response.data ?: emptyList()
-					}
+					is Response.Success -> response.data ?: emptyList()
 					is Response.Error -> emptyList()
 				}
 			}

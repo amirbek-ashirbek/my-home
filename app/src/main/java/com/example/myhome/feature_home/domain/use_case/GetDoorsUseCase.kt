@@ -4,6 +4,7 @@ import com.example.myhome.feature_home.domain.repository.DoorRepository
 import com.example.myhome.realm.model.Door
 import com.example.myhome.util.Response
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
@@ -16,10 +17,13 @@ class GetDoorsUseCase @Inject constructor(
 	suspend fun execute(): Flow<List<Door>> {
 		val doorsFromDatabase = getDoorsFromDatabase()
 
-		return if (doorsFromDatabase.isNotEmpty()) {
-			flowOf(doorsFromDatabase)
+		if (doorsFromDatabase.isNotEmpty()) {
+			return flowOf(doorsFromDatabase)
 		} else {
-			getDoorsFromNetwork()
+			val doorsFromNetwork = getDoorsFromNetwork().first()
+			insertDoorsIntoDatabase(doors = doorsFromNetwork)
+			updateDoorsInDatabase()
+			return flowOf(getDoorsFromDatabase())
 		}
 	}
 
@@ -27,17 +31,11 @@ class GetDoorsUseCase @Inject constructor(
 		return doorRepository.getDoorsFromDatabase().firstOrNull() ?: emptyList()
 	}
 
-	private suspend fun getDoorsFromNetwork(): Flow<List<Door>> {
+	private fun getDoorsFromNetwork(): Flow<List<Door>> {
 		return doorRepository.getDoorsFromNetwork()
 			.map { response ->
 				when (response) {
-					is Response.Success -> {
-						response.data?.let { doors ->
-							insertDoorsIntoDatabase(doors)
-						}
-						updateDoorsInDatabase()
-						response.data ?: emptyList()
-					}
+					is Response.Success -> response.data ?: emptyList()
 					is Response.Error -> emptyList()
 				}
 			}
