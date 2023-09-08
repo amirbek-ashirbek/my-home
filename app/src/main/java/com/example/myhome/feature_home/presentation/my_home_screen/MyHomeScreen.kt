@@ -25,7 +25,7 @@ import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterEnd
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Alignment.Companion.TopCenter
@@ -38,6 +38,7 @@ import com.example.myhome.R
 import com.example.myhome.feature_home.presentation.my_home_screen.components.ButtonFavourite
 import com.example.myhome.feature_home.presentation.my_home_screen.components.CameraItem
 import com.example.myhome.feature_home.presentation.my_home_screen.components.MyHomeHeader
+import com.example.myhome.feature_home.presentation.my_home_screen.components.common.ErrorMessage
 import com.example.myhome.feature_home.presentation.my_home_screen.components.door.DoorActionsRow
 import com.example.myhome.feature_home.presentation.my_home_screen.components.door.DoorItem
 import com.example.myhome.feature_home.presentation.my_home_screen.components.door.DoorLockDialog
@@ -132,6 +133,7 @@ fun MyHomeScreen(
 						CamerasTabContent(
 							cameras = uiState.cameras,
 							camerasAreLoading = uiState.camerasAreLoading,
+							camerasError = uiState.camerasError,
 							onCamerasRefreshed = { onMyHomeEvent(MyHomeEvent.CamerasPullRefreshed) },
 							onIsFavouriteButtonClicked = { camera ->
 								onMyHomeEvent(MyHomeEvent.CameraIsFavouriteToggled(camera = camera))
@@ -142,6 +144,7 @@ fun MyHomeScreen(
 						DoorsTabContent(
 							doors = uiState.doors,
 							doorsAreLoading = uiState.doorsAreLoading,
+							doorsError = uiState.doorsError,
 							onDoorsRefreshed = { onMyHomeEvent(MyHomeEvent.DoorsPullRefreshed) },
 							onIsFavouriteButtonClicked = { door ->
 								onMyHomeEvent(MyHomeEvent.DoorIsFavouriteToggled(door = door))
@@ -162,6 +165,7 @@ fun MyHomeScreen(
 fun CamerasTabContent(
 	cameras: Map<String?, List<Camera>>?,
 	camerasAreLoading: Boolean,
+	camerasError: Boolean,
 	onCamerasRefreshed: () -> Unit,
 	onIsFavouriteButtonClicked: (Camera) -> Unit
 ) {
@@ -175,11 +179,23 @@ fun CamerasTabContent(
 
 	Box(
 		modifier = Modifier
+			.fillMaxSize()
 			.pullRefresh(camerasPullRefreshState)
 	) {
+		if (camerasError) {
+			Box(
+				modifier = Modifier.fillMaxSize()
+			) {
+				ErrorMessage(
+					onRetry = onCamerasRefreshed,
+					modifier = Modifier
+						.align(Center)
+				)
+			}
+		}
 		if (camerasAreLoading) {
 			Box(modifier = Modifier.fillMaxSize()) {
-				CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+				CircularProgressIndicator(modifier = Modifier.align(Center))
 			}
 		} else {
 			Column(
@@ -233,6 +249,7 @@ fun CamerasTabContent(
 fun DoorsTabContent(
 	doors: List<Door>?,
 	doorsAreLoading: Boolean,
+	doorsError: Boolean,
 	onDoorsRefreshed: () -> Unit,
 	onIsFavouriteButtonClicked: (Door) -> Unit,
 	onLockClicked: (Door) -> Unit,
@@ -250,9 +267,20 @@ fun DoorsTabContent(
 			.fillMaxSize()
 			.pullRefresh(state = doorsPullRefreshState)
 	) {
+		if (doorsError) {
+			Box(
+				modifier = Modifier.fillMaxSize()
+			) {
+				ErrorMessage(
+					onRetry = onDoorsRefreshed,
+					modifier = Modifier
+						.align(Center)
+				)
+			}
+		}
 		if (doorsAreLoading) {
 			Box(modifier = Modifier.fillMaxSize()) {
-				CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+				CircularProgressIndicator(modifier = Modifier.align(Center))
 			}
 		} else {
 			Column(

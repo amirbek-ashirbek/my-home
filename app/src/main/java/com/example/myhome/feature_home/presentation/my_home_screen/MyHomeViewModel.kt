@@ -57,7 +57,7 @@ class MyHomeViewModel @Inject constructor(
 	}
 
 	private fun getCameras() {
-		_uiState.value = _uiState.value?.copy(camerasAreLoading = true)
+		_uiState.value = _uiState.value?.copy(camerasAreLoading = true, camerasError = false)
 		updateCamerasState()
 	}
 
@@ -67,7 +67,8 @@ class MyHomeViewModel @Inject constructor(
 				val camerasGroupedByRoom: Map<String?, List<Camera>> = cameras.groupBy { it.room }
 				_uiState.value = _uiState.value?.copy(
 					cameras = camerasGroupedByRoom,
-					camerasAreLoading = false
+					camerasAreLoading = false,
+					camerasError = cameras.isEmpty()
 				)
 			}
 		}
@@ -82,7 +83,7 @@ class MyHomeViewModel @Inject constructor(
 	}
 
 	private fun getDoors() {
-		_uiState.value = _uiState.value?.copy(doorsAreLoading = true)
+		_uiState.value = _uiState.value?.copy(doorsAreLoading = true, doorsError = false)
 		updateDoorsState()
 	}
 
@@ -91,7 +92,8 @@ class MyHomeViewModel @Inject constructor(
 			getDoorsUseCase.execute().collect { doors ->
 				_uiState.value = _uiState.value?.copy(
 					doors = doors,
-					doorsAreLoading = false
+					doorsAreLoading = false,
+					doorsError = doors.isEmpty()
 				)
 			}
 		}
