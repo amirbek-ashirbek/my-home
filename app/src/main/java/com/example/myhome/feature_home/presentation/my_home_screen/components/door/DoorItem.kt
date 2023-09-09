@@ -44,6 +44,7 @@ fun DoorItem(
 	isLocked: Boolean,
 	isFromDatabase: Boolean,
 	onLockClicked: () -> Unit,
+	offset: Float,
 	modifier : Modifier = Modifier
 ) {
 
@@ -57,7 +58,7 @@ fun DoorItem(
 	val offsetTransition by transition.animateFloat(
 		label = "cameraOffsetTransition",
 		transitionSpec = { tween(durationMillis = 500) },
-		targetValueByState = { if (isRevealed) -250f else 0f },
+		targetValueByState = { if (isRevealed) -offset else 0f },
 	)
 
 	Card(
