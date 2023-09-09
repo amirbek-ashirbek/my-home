@@ -142,7 +142,8 @@ fun MyHomeScreen(
 							onCamerasRefreshed = { onMyHomeEvent(MyHomeEvent.CamerasPullRefreshed) },
 							onIsFavouriteButtonClicked = { camera ->
 								onMyHomeEvent(MyHomeEvent.CameraIsFavouriteToggled(camera = camera))
-							}
+							},
+							onRetryClicked = { onMyHomeEvent(MyHomeEvent.RetryClicked) }
 						)
 					}
 					1 -> {
@@ -156,7 +157,8 @@ fun MyHomeScreen(
 							},
 							onLockClicked = {  door ->
 								onMyHomeEvent(MyHomeEvent.DoorLockClicked(door = door))
-							}
+							},
+							onRetryClicked = { onMyHomeEvent(MyHomeEvent.RetryClicked) }
 						)
 					}
 				}
@@ -172,6 +174,7 @@ fun CamerasTabContent(
 	camerasAreLoading: Boolean,
 	camerasError: Boolean,
 	onCamerasRefreshed: () -> Unit,
+	onRetryClicked: () -> Unit,
 	onIsFavouriteButtonClicked: (Camera) -> Unit
 ) {
 
@@ -194,7 +197,7 @@ fun CamerasTabContent(
 				modifier = Modifier.fillMaxSize()
 			) {
 				ErrorMessage(
-					onRetry = onCamerasRefreshed,
+					onRetry = onRetryClicked,
 					modifier = Modifier
 						.align(Center)
 				)
@@ -263,6 +266,7 @@ fun DoorsTabContent(
 	doorsAreLoading: Boolean,
 	doorsError: Boolean,
 	onDoorsRefreshed: () -> Unit,
+	onRetryClicked: () -> Unit,
 	onIsFavouriteButtonClicked: (Door) -> Unit,
 	onLockClicked: (Door) -> Unit,
 	modifier: Modifier = Modifier
@@ -286,7 +290,7 @@ fun DoorsTabContent(
 				modifier = Modifier.fillMaxSize()
 			) {
 				ErrorMessage(
-					onRetry = onDoorsRefreshed,
+					onRetry = onRetryClicked,
 					modifier = Modifier
 						.align(Center)
 				)
