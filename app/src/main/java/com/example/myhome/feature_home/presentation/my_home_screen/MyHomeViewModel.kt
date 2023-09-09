@@ -53,6 +53,10 @@ class MyHomeViewModel @Inject constructor(
 			is MyHomeEvent.DoorLockDialogDismissed -> {
 				_uiState.value = _uiState.value?.copy(doorLockDialogIsVisible = false)
 			}
+			is MyHomeEvent.RetryClicked -> {
+				getCameras()
+				getDoors()
+			}
 		}
 	}
 
