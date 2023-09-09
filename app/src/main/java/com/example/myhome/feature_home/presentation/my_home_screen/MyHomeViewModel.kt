@@ -4,11 +4,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.myhome.feature_home.domain.use_case.ChangeCameraIsFavouriteUseCase
-import com.example.myhome.feature_home.domain.use_case.ChangeDoorIsFavouriteUseCase
-import com.example.myhome.feature_home.domain.use_case.ChangeDoorIsLockedUseCase
-import com.example.myhome.feature_home.domain.use_case.GetCamerasUseCase
-import com.example.myhome.feature_home.domain.use_case.GetDoorsUseCase
+import com.example.myhome.feature_home.domain.use_case.camera.ChangeCameraIsFavouriteUseCase
+import com.example.myhome.feature_home.domain.use_case.door.ChangeDoorIsFavouriteUseCase
+import com.example.myhome.feature_home.domain.use_case.door.ChangeDoorIsLockedUseCase
+import com.example.myhome.feature_home.domain.use_case.camera.GetCamerasUseCase
+import com.example.myhome.feature_home.domain.use_case.door.GetDoorsUseCase
 import com.example.myhome.realm.model.Camera
 import com.example.myhome.realm.model.Door
 import dagger.hilt.android.lifecycle.HiltViewModel

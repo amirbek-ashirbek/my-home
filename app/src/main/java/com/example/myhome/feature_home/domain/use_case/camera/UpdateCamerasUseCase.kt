@@ -1,4 +1,4 @@
-package com.example.myhome.feature_home.domain.use_case
+package com.example.myhome.feature_home.domain.use_case.camera
 
 import com.example.myhome.feature_home.domain.repository.CameraRepository
 import javax.inject.Inject
