@@ -24,12 +24,17 @@ import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterEnd
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Alignment.Companion.TopCenter
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -97,7 +102,7 @@ fun MyHomeScreen(
 				modifier = Modifier
 					.align(CenterHorizontally)
 			)
-			Spacer(modifier = Modifier.height(64.dp))
+			Spacer(modifier = Modifier.height(20.dp))
 			TabRow(
 				selectedTabIndex = pagerState.currentPage,
 				backgroundColor = MaterialTheme.colors.surface,
@@ -177,6 +182,8 @@ fun CamerasTabContent(
 
 	val scrollState = rememberScrollState()
 
+	var isFavouriteButtonWidth by remember { mutableStateOf(0) }
+
 	Box(
 		modifier = Modifier
 			.fillMaxSize()
@@ -218,14 +225,19 @@ fun CamerasTabContent(
 								ButtonFavourite(
 									isFavourite = camera.isFavourite,
 									onClick = { onIsFavouriteButtonClicked(camera) },
-									modifier = Modifier.align(CenterEnd)
+									modifier = Modifier
+										.align(CenterEnd)
+										.onGloballyPositioned { coordinates ->
+											isFavouriteButtonWidth = coordinates.size.width
+										}
 								)
 								CameraItem(
 									name = camera.name,
 									snapshot = camera.snapshot,
 									isRecording = camera.isRecording,
 									isFavourite = camera.isFavourite,
-									isFromDatabase = camera.isFromDatabase
+									isFromDatabase = camera.isFromDatabase,
+									offset = (isFavouriteButtonWidth.dp + 32.dp).value
 								)
 							}
 							Spacer(modifier = Modifier.height(12.dp))
@@ -262,6 +274,8 @@ fun DoorsTabContent(
 	)
 	val scrollState = rememberScrollState()
 
+	var doorActionsRowWidth by remember { mutableStateOf(0) }
+
 	Box(
 		modifier = Modifier
 			.fillMaxSize()
@@ -297,13 +311,17 @@ fun DoorsTabContent(
 							onIsFavouriteButtonClicked = { onIsFavouriteButtonClicked(door) },
 							modifier = Modifier
 								.align(CenterEnd)
+								.onGloballyPositioned { coordinates ->
+									doorActionsRowWidth = coordinates.size.width
+								}
 						)
 						DoorItem(
 							name = door.name,
 							snapshot = door.snapshot,
 							isLocked = door.isLocked,
 							isFromDatabase = door.isFromDatabase,
-							onLockClicked = { onLockClicked(door) }
+							onLockClicked = { onLockClicked(door) },
+							offset = (doorActionsRowWidth.dp + 32.dp).value
 						)
 					}
 					Spacer(modifier = Modifier.height(11.dp))

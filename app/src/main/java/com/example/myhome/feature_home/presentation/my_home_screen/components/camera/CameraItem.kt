@@ -40,6 +40,7 @@ fun CameraItem(
 	isRecording: Boolean,
 	isFavourite: Boolean,
 	isFromDatabase: Boolean,
+	offset: Float,
 	modifier: Modifier = Modifier
 ) {
 	var isRevealed by remember { mutableStateOf(false) }
@@ -52,7 +53,7 @@ fun CameraItem(
 	val offsetTransition by transition.animateFloat(
 		label = "cameraOffsetTransition",
 		transitionSpec = { tween(durationMillis = 500) },
-		targetValueByState = { if (isRevealed) -150f else 0f },
+		targetValueByState = { if (isRevealed) -offset else 0f },
 	)
 
 	Box(
