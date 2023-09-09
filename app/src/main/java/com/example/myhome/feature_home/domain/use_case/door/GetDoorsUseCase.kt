@@ -1,4 +1,4 @@
-package com.example.myhome.feature_home.domain.use_case
+package com.example.myhome.feature_home.domain.use_case.door
 
 import com.example.myhome.feature_home.domain.repository.DoorRepository
 import com.example.myhome.realm.model.Door
@@ -11,7 +11,9 @@ import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class GetDoorsUseCase @Inject constructor(
-	private val doorRepository: DoorRepository
+	private val doorRepository: DoorRepository,
+	private val saveDoorsToDatabaseUseCase: SaveDoorsToDatabaseUseCase,
+	private val updateDoorsUseCase: UpdateDoorsUseCase
 ) {
 
 	suspend fun execute(): Flow<List<Door>> {
@@ -21,8 +23,8 @@ class GetDoorsUseCase @Inject constructor(
 			return flowOf(doorsFromDatabase)
 		} else {
 			val doorsFromNetwork = getDoorsFromNetwork().first()
-			insertDoorsIntoDatabase(doors = doorsFromNetwork)
-			updateDoorsInDatabase()
+			saveDoorsToDatabaseUseCase.execute(doors = doorsFromNetwork)
+			updateDoorsUseCase.execute()
 			return flowOf(getDoorsFromDatabase())
 		}
 	}
@@ -39,16 +41,6 @@ class GetDoorsUseCase @Inject constructor(
 					is Response.Error -> emptyList()
 				}
 			}
-	}
-
-	private suspend fun insertDoorsIntoDatabase(doors: List<Door>) {
-		doors.forEach { door ->
-			doorRepository.insertDoor(door = door)
-		}
-	}
-
-	private suspend fun updateDoorsInDatabase() {
-		doorRepository.updateDoors()
 	}
 
 }
