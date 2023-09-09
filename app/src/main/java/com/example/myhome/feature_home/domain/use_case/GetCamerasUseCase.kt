@@ -11,7 +11,9 @@ import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class GetCamerasUseCase @Inject constructor(
-	private val cameraRepository: CameraRepository
+	private val cameraRepository: CameraRepository,
+	private val saveCamerasToDatabaseUseCase: SaveCamerasToDatabaseUseCase,
+	private val updateCamerasUseCase: UpdateCamerasUseCase
 ) {
 
 	suspend fun execute(): Flow<List<Camera>> {
@@ -21,8 +23,8 @@ class GetCamerasUseCase @Inject constructor(
 			return flowOf(camerasFromDatabase)
 		} else {
 			val camerasFromNetwork = getCamerasFromNetwork().first()
-			insertCamerasIntoDatabase(cameras = camerasFromNetwork)
-			updateCamerasInDatabase()
+			saveCamerasToDatabaseUseCase.execute(cameras = camerasFromNetwork)
+			updateCamerasUseCase.execute()
 			return flowOf(getCamerasFromDatabase())
 		}
 	}
@@ -39,16 +41,6 @@ class GetCamerasUseCase @Inject constructor(
 					is Response.Error -> emptyList()
 				}
 			}
-	}
-
-	private suspend fun insertCamerasIntoDatabase(cameras: List<Camera>) {
-		cameras.forEach { camera ->
-			cameraRepository.insertCamera(camera)
-		}
-	}
-
-	private suspend fun updateCamerasInDatabase() {
-		cameraRepository.updateCameras()
 	}
 
 }
