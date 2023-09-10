@@ -34,6 +34,15 @@ class DoorDatabaseManager @Inject constructor(
 		}
 	}
 
+	fun updateDoorName(door: Door, doorName: String) {
+		realm.writeBlocking {
+			val queriedDoor = query<Door>(query = "_id == $0", door._id).first().find()
+			if (queriedDoor?.name != doorName) {
+				queriedDoor?.name = doorName
+			}
+		}
+	}
+
 	suspend fun updateDoors() {
 		val allDoors: RealmResults<Door> = realm.query<Door>().find()
 		val possibleNames = listOf("Подъезд 1", "Выход на пожарную лестницу", "Подъезд 2")

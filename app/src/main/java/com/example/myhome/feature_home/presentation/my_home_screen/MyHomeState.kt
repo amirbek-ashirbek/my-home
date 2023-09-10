@@ -13,5 +13,8 @@ data class MyHomeState(
 	val lockClickedDoor: Door? = null,
 	val doorsAreLoading: Boolean = false,
 	val doorsError: Boolean = false,
-	val doorLockDialogIsVisible: Boolean = false
+	val editClickedDoor: Door? = null,
+	val doorLockDialogIsVisible: Boolean = false,
+	val doorEditNameDialogIsVisible: Boolean = false,
+	val doorNameOnEdit: String? = null,
 )

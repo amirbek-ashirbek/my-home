@@ -7,10 +7,12 @@
     <string name="online">В сети</string>
     <string name="yes">Да</string>
     <string name="cancel">Отменить</string>
+    <string name="confirm">Подтвердить</string>
     <string name="confirm_action">Подтвердите действие</string>
     <string name="lock_are_you_sure">Вы уверены, что хотите %s "%s"?</string>
     <string name="lock">заблокировать</string>
     <string name="unlock">разблокировать</string>
     <string name="something_went_wrong">Что-то пошло не так</string>
     <string name="try_again">Попробуйте еще раз</string>
+    <string name="choose_name">Выберите имя</string>
 </resources>

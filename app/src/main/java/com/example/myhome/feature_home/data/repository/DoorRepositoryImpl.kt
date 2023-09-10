@@ -43,6 +43,10 @@ class DoorRepositoryImpl @Inject constructor(
 		doorDatabaseManager.updateDoorIsLocked(door = door)
 	}
 
+	override suspend fun updateDoorName(door: Door, doorName: String) {
+		doorDatabaseManager.updateDoorName(door = door, doorName = doorName)
+	}
+
 	override suspend fun updateDoors() {
 		doorDatabaseManager.updateDoors()
 	}
