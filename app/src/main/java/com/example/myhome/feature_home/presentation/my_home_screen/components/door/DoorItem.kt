@@ -25,6 +25,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -58,7 +59,7 @@ fun DoorItem(
 	val offsetTransition by transition.animateFloat(
 		label = "cameraOffsetTransition",
 		transitionSpec = { tween(durationMillis = 500) },
-		targetValueByState = { if (isRevealed) -offset else 0f },
+		targetValueByState = { if (isRevealed) offset else 0f },
 	)
 
 	Card(
@@ -68,6 +69,7 @@ fun DoorItem(
 		modifier = Modifier
 			.fillMaxWidth()
 			.offset { IntOffset((offsetTransition).roundToInt(), 0) }
+			.clip(shape = RoundedCornerShape(12.dp))
 			.clickable(
 				onClick = {
 					isRevealed = !isRevealed

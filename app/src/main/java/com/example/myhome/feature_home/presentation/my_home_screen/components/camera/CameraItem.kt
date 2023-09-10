@@ -1,4 +1,4 @@
-package com.example.myhome.feature_home.presentation.my_home_screen.components
+package com.example.myhome.feature_home.presentation.my_home_screen.components.camera
 
 import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.animation.core.animateFloat
@@ -25,6 +25,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.IntOffset
@@ -53,13 +54,14 @@ fun CameraItem(
 	val offsetTransition by transition.animateFloat(
 		label = "cameraOffsetTransition",
 		transitionSpec = { tween(durationMillis = 500) },
-		targetValueByState = { if (isRevealed) -offset else 0f },
+		targetValueByState = { if (isRevealed) offset else 0f },
 	)
 
 	Box(
 		modifier = Modifier
 			.fillMaxWidth()
 			.offset { IntOffset((offsetTransition).roundToInt(), 0) }
+			.clip(shape = RoundedCornerShape(12.dp))
 			.clickable(
 				onClick = {
 					isRevealed = !isRevealed

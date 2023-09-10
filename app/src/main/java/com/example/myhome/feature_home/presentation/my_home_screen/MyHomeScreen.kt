@@ -41,7 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.myhome.R
 import com.example.myhome.feature_home.presentation.my_home_screen.components.ButtonFavourite
-import com.example.myhome.feature_home.presentation.my_home_screen.components.CameraItem
+import com.example.myhome.feature_home.presentation.my_home_screen.components.camera.CameraItem
 import com.example.myhome.feature_home.presentation.my_home_screen.components.MyHomeHeader
 import com.example.myhome.feature_home.presentation.my_home_screen.components.common.ErrorMessage
 import com.example.myhome.feature_home.presentation.my_home_screen.components.door.DoorActionsRow
@@ -240,7 +240,7 @@ fun CamerasTabContent(
 									isRecording = camera.isRecording,
 									isFavourite = camera.isFavourite,
 									isFromDatabase = camera.isFromDatabase,
-									offset = (isFavouriteButtonWidth.dp + 32.dp).value
+									offset = -(isFavouriteButtonWidth.dp + 32.dp).value
 								)
 							}
 							Spacer(modifier = Modifier.height(12.dp))
@@ -325,7 +325,7 @@ fun DoorsTabContent(
 							isLocked = door.isLocked,
 							isFromDatabase = door.isFromDatabase,
 							onLockClicked = { onLockClicked(door) },
-							offset = (doorActionsRowWidth.dp + 32.dp).value
+							offset = -(doorActionsRowWidth.dp + 32.dp).value
 						)
 					}
 					Spacer(modifier = Modifier.height(11.dp))
