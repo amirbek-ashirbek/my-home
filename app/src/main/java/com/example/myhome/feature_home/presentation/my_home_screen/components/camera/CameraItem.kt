@@ -25,7 +25,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.IntOffset
@@ -57,83 +57,80 @@ fun CameraItem(
 		targetValueByState = { if (isRevealed) offset else 0f },
 	)
 
-	Box(
+	Card(
+		backgroundColor = MaterialTheme.colors.background,
 		modifier = Modifier
 			.fillMaxWidth()
 			.offset { IntOffset((offsetTransition).roundToInt(), 0) }
-			.clip(shape = RoundedCornerShape(12.dp))
+			.shadow(
+				elevation = 1.dp,
+				shape = RoundedCornerShape(12.dp)
+			)
 			.clickable(
 				onClick = {
 					isRevealed = !isRevealed
 				}
 			)
 	) {
-		Card(
-			shape = RoundedCornerShape(12.dp),
-			elevation = 1.dp,
-			backgroundColor = MaterialTheme.colors.background,
-			modifier = Modifier
-				.fillMaxSize()
-		) {
-			Column {
-				Box(
-					modifier = Modifier
-						.fillMaxSize()
-				) {
-					if (isFromDatabase) {
+		Column {
+			Box(
+				modifier = Modifier
+					.fillMaxSize()
+			) {
+				if (isFromDatabase) {
+					Image(
+						painter = painterResource(id = R.drawable.camera_image),
+						contentDescription = null,
+						contentScale = ContentScale.FillBounds,
+						modifier = Modifier
+							.fillMaxWidth()
+							.height(207.dp)
+					)
+				} else {
+					AsyncImage(
+						model = snapshot,
+						contentDescription = null,
+						contentScale = ContentScale.FillBounds,
+						modifier = Modifier
+							.fillMaxWidth()
+							.height(207.dp)
+					)
+				}
+				if (isRecording) {
+					Box(
+						modifier = Modifier
+							.align(Alignment.TopStart)
+							.padding(start = 8.dp, top = 8.dp)
+					) {
 						Image(
-							painter = painterResource(id = R.drawable.camera_image),
-							contentDescription = null,
-							contentScale = ContentScale.FillBounds,
-							modifier = Modifier
-								.fillMaxWidth()
-								.height(207.dp)
+							painter = painterResource(id = R.drawable.rec),
+							contentDescription = "Recording symbol"
 						)
-					} else {
-						AsyncImage(
-							model = snapshot,
-							contentDescription = null,
-							contentScale = ContentScale.FillBounds,
-							modifier = Modifier
-								.fillMaxWidth()
-								.height(207.dp)
-						)
-					}
-					if (isRecording) {
-						Box(
-							modifier = Modifier
-								.align(Alignment.TopStart)
-								.padding(start = 8.dp, top = 8.dp)
-						) {
-							Image(
-								painter = painterResource(id = R.drawable.rec),
-								contentDescription = "Recording symbol"
-							)
-						}
-					}
-					if (isFavourite) {
-						Box(
-							modifier = Modifier
-								.align(Alignment.TopEnd)
-								.padding(end = 8.dp, top = 8.dp)
-						) {
-							Image(
-								painter = painterResource(id = R.drawable.star),
-								contentDescription = "Favourites star symbol"
-							)
-						}
 					}
 				}
-				Spacer(modifier = Modifier.height(22.dp))
-				Text(
-					text = name,
-					modifier = Modifier
-						.padding(start = 18.dp)
-				)
-				Spacer(modifier = Modifier
-					.height(20.dp)
-				)
+				if (isFavourite) {
+					Box(
+						modifier = Modifier
+							.align(Alignment.TopEnd)
+							.padding(end = 8.dp, top = 8.dp)
+					) {
+						Image(
+							painter = painterResource(id = R.drawable.star),
+							contentDescription = "Favourites star symbol"
+						)
+					}
+				}
 			}
+			Spacer(modifier = Modifier.height(22.dp))
+			Text(
+				text = name,
+				modifier = Modifier
+					.padding(start = 18.dp)
+			)
+			Spacer(modifier = Modifier
+				.height(20.dp)
+			)
 		}
 	}
+
 }

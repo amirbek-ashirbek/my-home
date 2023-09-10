@@ -25,7 +25,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -63,18 +63,19 @@ fun DoorItem(
 	)
 
 	Card(
-		shape = RoundedCornerShape(12.dp),
-		elevation = 1.dp,
 		backgroundColor = MaterialTheme.colors.background,
 		modifier = Modifier
 			.fillMaxWidth()
 			.offset { IntOffset((offsetTransition).roundToInt(), 0) }
-			.clip(shape = RoundedCornerShape(12.dp))
+			.shadow(
+				elevation = 1.dp,
+				shape = RoundedCornerShape(12.dp)
+			)
 			.clickable(
 				onClick = {
 					isRevealed = !isRevealed
 				}
-			)
+		)
 	) {
 		Column {
 			if (snapshot != null && !isFromDatabase) {
@@ -142,4 +143,5 @@ fun DoorItem(
 			}
 		}
 	}
+
 }
