@@ -11,5 +11,9 @@ sealed class MyHomeEvent {
 	data class DoorIsLockedToggled(val door: Door) : MyHomeEvent()
 	object DoorsPullRefreshed : MyHomeEvent()
 	object DoorLockDialogDismissed : MyHomeEvent()
+	data class DoorEditClicked(val door: Door) : MyHomeEvent()
+	data class DoorNameEdited(val doorName: String) : MyHomeEvent()
+	object DoorNameEditConfirmed : MyHomeEvent()
+	object DoorEditNameDialogDismissed: MyHomeEvent()
 	object RetryClicked : MyHomeEvent()
 }

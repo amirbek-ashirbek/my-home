@@ -16,6 +16,8 @@ interface DoorRepository {
 
 	suspend fun updateDoorIsLocked(door: Door)
 
+	suspend fun updateDoorName(door: Door, doorName: String)
+
 	suspend fun updateDoors()
 
 }

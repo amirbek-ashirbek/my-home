@@ -8,6 +8,7 @@ import com.example.myhome.feature_home.domain.use_case.camera.ChangeCameraIsFavo
 import com.example.myhome.feature_home.domain.use_case.door.ChangeDoorIsFavouriteUseCase
 import com.example.myhome.feature_home.domain.use_case.door.ChangeDoorIsLockedUseCase
 import com.example.myhome.feature_home.domain.use_case.camera.GetCamerasUseCase
+import com.example.myhome.feature_home.domain.use_case.door.EditDoorNameUseCase
 import com.example.myhome.feature_home.domain.use_case.door.GetDoorsUseCase
 import com.example.myhome.realm.model.Camera
 import com.example.myhome.realm.model.Door
@@ -21,7 +22,8 @@ class MyHomeViewModel @Inject constructor(
 	private val changeCameraIsFavouriteUseCase: ChangeCameraIsFavouriteUseCase,
 	private val getDoorsUseCase: GetDoorsUseCase,
 	private val changeDoorIsFavouriteUseCase: ChangeDoorIsFavouriteUseCase,
-	private val changeDoorIsLockedUseCase: ChangeDoorIsLockedUseCase
+	private val changeDoorIsLockedUseCase: ChangeDoorIsLockedUseCase,
+	private val editDoorNameUseCase: EditDoorNameUseCase
 ) : ViewModel() {
 
 	private val _uiState = MutableLiveData(
@@ -52,6 +54,25 @@ class MyHomeViewModel @Inject constructor(
 			}
 			is MyHomeEvent.DoorLockDialogDismissed -> {
 				_uiState.value = _uiState.value?.copy(doorLockDialogIsVisible = false)
+			}
+			is MyHomeEvent.DoorEditClicked -> {
+				_uiState.value = _uiState.value?.copy(
+					doorEditNameDialogIsVisible = true,
+					editClickedDoor = event.door,
+					doorNameOnEdit = event.door.name
+				)
+			}
+			is MyHomeEvent.DoorNameEdited -> {
+				_uiState.value = _uiState.value?.copy(doorNameOnEdit = event.doorName)
+			}
+			is MyHomeEvent.DoorNameEditConfirmed -> {
+				editDoorName(
+					door = _uiState.value?.editClickedDoor!!,
+					doorName = _uiState.value?.doorNameOnEdit!!
+				)
+			}
+			is MyHomeEvent.DoorEditNameDialogDismissed -> {
+				_uiState.value = _uiState.value?.copy(doorEditNameDialogIsVisible = false)
 			}
 			is MyHomeEvent.RetryClicked -> {
 				getCameras()
@@ -118,6 +139,17 @@ class MyHomeViewModel @Inject constructor(
 			updateDoorsState()
 		}
 		_uiState.value = _uiState.value?.copy(doorLockDialogIsVisible = false)
+	}
+
+	private fun editDoorName(door: Door, doorName: String) {
+		viewModelScope.launch {
+			editDoorNameUseCase.execute(
+				door = door,
+				doorName = doorName
+			)
+			updateDoorsState()
+		}
+		_uiState.value = _uiState.value?.copy(doorEditNameDialogIsVisible = false)
 	}
 
 }

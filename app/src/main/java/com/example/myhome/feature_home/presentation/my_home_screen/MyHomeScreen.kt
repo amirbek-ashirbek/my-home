@@ -45,6 +45,7 @@ import com.example.myhome.feature_home.presentation.my_home_screen.components.ca
 import com.example.myhome.feature_home.presentation.my_home_screen.components.MyHomeHeader
 import com.example.myhome.feature_home.presentation.my_home_screen.components.common.ErrorMessage
 import com.example.myhome.feature_home.presentation.my_home_screen.components.door.DoorActionsRow
+import com.example.myhome.feature_home.presentation.my_home_screen.components.door.DoorEditNameDialog
 import com.example.myhome.feature_home.presentation.my_home_screen.components.door.DoorItem
 import com.example.myhome.feature_home.presentation.my_home_screen.components.door.DoorLockDialog
 import com.example.myhome.realm.model.Camera
@@ -69,6 +70,7 @@ fun MyHomeScreen(
 	) { 2 }
 
 	val doorLockDialogIsVisible = uiState.doorLockDialogIsVisible
+	val doorEditNameDialogIsVisible = uiState.doorEditNameDialogIsVisible
 
 	if (doorLockDialogIsVisible) {
 
@@ -86,6 +88,19 @@ fun MyHomeScreen(
 				dialogText = dialogText,
 				onDismissRequest = { onMyHomeEvent(MyHomeEvent.DoorLockDialogDismissed) },
 				onConfirmClicked = { onMyHomeEvent(MyHomeEvent.DoorIsLockedToggled(door = door)) }
+			)
+		}
+	}
+
+	if (doorEditNameDialogIsVisible) {
+		uiState.editClickedDoor?.let { door ->
+			DoorEditNameDialog(
+				doorName = uiState.doorNameOnEdit ?: "",
+				onDoorNameTextChanged = { doorName ->
+					onMyHomeEvent(MyHomeEvent.DoorNameEdited(doorName))
+				},
+				onDoorNameChangeConfirmed = { onMyHomeEvent(MyHomeEvent.DoorNameEditConfirmed) },
+				onDismiss = { onMyHomeEvent(MyHomeEvent.DoorEditNameDialogDismissed) }
 			)
 		}
 	}
@@ -157,6 +172,9 @@ fun MyHomeScreen(
 							},
 							onLockClicked = {  door ->
 								onMyHomeEvent(MyHomeEvent.DoorLockClicked(door = door))
+							},
+							onEditClicked = { door ->
+								onMyHomeEvent(MyHomeEvent.DoorEditClicked(door = door))
 							},
 							onRetryClicked = { onMyHomeEvent(MyHomeEvent.RetryClicked) }
 						)
@@ -269,6 +287,7 @@ fun DoorsTabContent(
 	onRetryClicked: () -> Unit,
 	onIsFavouriteButtonClicked: (Door) -> Unit,
 	onLockClicked: (Door) -> Unit,
+	onEditClicked: (Door) -> Unit,
 	modifier: Modifier = Modifier
 ) {
 
@@ -311,7 +330,7 @@ fun DoorsTabContent(
 					Box {
 						DoorActionsRow(
 							isFavourite = door.isFavourite,
-							onEditButtonClicked = {},
+							onEditButtonClicked = { onEditClicked(door) },
 							onIsFavouriteButtonClicked = { onIsFavouriteButtonClicked(door) },
 							modifier = Modifier
 								.align(CenterEnd)
