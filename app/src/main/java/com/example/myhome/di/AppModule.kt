@@ -2,6 +2,8 @@ package com.example.myhome.di
 
 import android.content.Context
 import com.chuckerteam.chucker.api.ChuckerInterceptor
+import com.example.myhome.feature_home.data.local.CameraDatabaseManager
+import com.example.myhome.feature_home.data.local.DoorDatabaseManager
 import com.example.myhome.realm.model.Camera
 import com.example.myhome.realm.model.Door
 import com.example.myhome.feature_home.data.remote.HomeApi
@@ -71,14 +73,26 @@ object AppModule {
 
 	@Provides
 	@Singleton
-	fun provideCameraRepository(homeApi: HomeApi, realm: Realm): CameraRepository {
-		return CameraRepositoryImpl(homeApi = homeApi, realm = realm)
+	fun provideCameraDatabaseManager(realm: Realm): CameraDatabaseManager {
+		return CameraDatabaseManager(realm = realm)
 	}
 
 	@Provides
 	@Singleton
-	fun provideDoorRepository(homeApi: HomeApi, realm: Realm) : DoorRepository {
-		return DoorRepositoryImpl(homeApi = homeApi, realm = realm)
+	fun provideCameraRepository(homeApi: HomeApi, cameraDatabaseManager: CameraDatabaseManager): CameraRepository {
+		return CameraRepositoryImpl(homeApi = homeApi, cameraDatabaseManager = cameraDatabaseManager)
+	}
+
+	@Provides
+	@Singleton
+	fun provideDoorDatabaseManager(realm: Realm): DoorDatabaseManager {
+		return DoorDatabaseManager(realm = realm)
+	}
+
+	@Provides
+	@Singleton
+	fun provideDoorRepository(homeApi: HomeApi, doorDatabaseManager: DoorDatabaseManager) : DoorRepository {
+		return DoorRepositoryImpl(homeApi = homeApi, doorDatabaseManager = doorDatabaseManager)
 	}
 
 }
