@@ -1,6 +1,6 @@
 # My Home
 
--	The app imitates a virtual control center for managing cameras and doors in a smart home setup. It retrieves data from a server, offers local database storage with editing capabilities, and allows users to remotely control door locking and unlocking.
+-	The app imitates a smart home controller. It retrieves data from a server, offers local database storage with editing capabilities, and allows users to remotely control door locking and unlocking.
 -	Tech stack: Kotlin, Jetpack Compose, MVVM, Realm, Ktor, LiveData, Hilt, Coil.
 
 <p align="left">
